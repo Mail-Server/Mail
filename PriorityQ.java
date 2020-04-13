@@ -46,9 +46,14 @@ public class PriorityQ implements IPriorityQueue{
         PriorityQ pr=new PriorityQ();
         pr.insert(5,1);
         pr.insert(10,2);
-        pr.insert(8,4);
-        System.out.println("The removed is "+pr.removeMin());
-        System.out.println("The min is "+pr.min());
+        pr.insert(8,15);
+        pr.insert(19,20);
+        pr.insert(1,3);
+        pr.insert(6,10);
+        pr.insert(4,16);
+        pr.insert(1000,19);
+        //System.out.println("The removed is "+pr.removeMin());
+        //System.out.println("The min is "+pr.min());
         pr.show();
         System.out.println("The size is "+pr.size());
     }
@@ -63,15 +68,38 @@ public class PriorityQ implements IPriorityQueue{
             head=node;
         }else {
             Node2 n=head;
-            for(int i=0;i<size;i++){
-                while(n.next!=null) {
+            Node2 trace=head;
+            int flag=0;
+            int first=0;
+                while (n.next != null) {
                     if (key > n.getAccess()) {
+                        if(first==1){
+                            trace=trace.next;
+                        }
                         n = n.next;
-                    } else
+                        first=1;
+                    } else {
+                        trace.next=node;
+                        node.next=n;
+                        flag=1;
                         break;
+                    }
                 }
-            }
-            n.next=node;
+                if(size>1 && n.next==null && key < n.getAccess()){
+            if (key > n.getAccess()) {
+                if(first==1){
+                    trace=trace.next;
+                }
+                n = n.next;
+                first=1;
+            } else {
+                trace.next=node;
+                node.next=n;
+                flag=1;
+            }}
+                if(flag==0){
+                   n.next=node;
+                }
         }
         size++;
     }
@@ -109,7 +137,7 @@ public class PriorityQ implements IPriorityQueue{
     }
     public void show(){
         Node2 node=head;
-        for(int i=0;i<size;i++){
+        while (node!=null){
             System.out.println(node.getElement());
             node=node.getNext();
         }
