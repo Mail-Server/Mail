@@ -44,7 +44,7 @@ public class PriorityQ implements IPriorityQueue{
 
     public static void main(String[] args) {
         PriorityQ pr=new PriorityQ();
-        pr.insert(5,1);
+        pr.insert(0,1);
         pr.insert(10,2);
         pr.insert(8,15);
         pr.insert(19,20);
@@ -52,7 +52,10 @@ public class PriorityQ implements IPriorityQueue{
         pr.insert(6,10);
         pr.insert(4,16);
         pr.insert(1000,19);
-        //System.out.println("The removed is "+pr.removeMin());
+        pr.insert(2000,30);
+        pr.insert(5000,17);
+        System.out.println("The removed is "+pr.removeMin());
+        pr.insert(5,1);
         //System.out.println("The min is "+pr.min());
         pr.show();
         System.out.println("The size is "+pr.size());
@@ -65,6 +68,9 @@ public class PriorityQ implements IPriorityQueue{
         node.setElement(item);
         node.setAccess(key);
         if(size==0){
+            head=node;
+        }else if(key<head.getAccess()){
+            node.next=head;
             head=node;
         }else {
             Node2 n=head;
@@ -85,13 +91,9 @@ public class PriorityQ implements IPriorityQueue{
                         break;
                     }
                 }
-                if(size>1 && n.next==null && key < n.getAccess()){
+                if(size>1 && n.next==null ){
             if (key > n.getAccess()) {
-                if(first==1){
-                    trace=trace.next;
-                }
-                n = n.next;
-                first=1;
+                n.next = node;
             } else {
                 trace.next=node;
                 node.next=n;
