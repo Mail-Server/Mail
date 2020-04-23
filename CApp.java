@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.Scanner;
 import javax.swing.*;
-public class CApp {
+public class CApp implements IApp{
 Scanner reader=new Scanner(System.in);
 UserAccount currentUser;
 	/**
@@ -284,10 +284,16 @@ private boolean setPriority(String priority,Email newEmail) {
 private void setAttachments(SLL attachments) {
 	
 }
+
+
+@Override
+public boolean signup(IContact contact) {
+	// TODO Auto-generated method stub
+	return false;
+}
  
 /*public boolean compose(Email newEmail) {
 isRight=setSubject(newEmail.getSubject())||setPriority(newEmail.getPriority())||setBody(newEmail.getBody());
 //TODO Add setTo to isRight
-	
 }*/
 }
