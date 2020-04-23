@@ -1,5 +1,6 @@
 
 public class Email implements IMail{
+private String path;
 private String from;//Sender of the email
 private SLL to ;//Receiver of the email
 private String subject;//The subject of the email
@@ -32,7 +33,15 @@ public void setAttachments(SLL attachments) {
 public void setFolder(String Folder) {
 	this.folder=Folder;
 }
-
+public void setPath() {//Used in the GUI
+	this.path="Accounts\\"+this.from+"\\"+this.from+this.date;
+}
+public void setPath(String path) {//Used when reading from the index file
+	this.path=path;
+}
+public String getPath() {
+	return this.path;
+}
 /**
  * 
  * @param path
