@@ -1,4 +1,9 @@
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 import javax.swing.*;
 public class CApp implements IApp{
@@ -100,7 +105,7 @@ public boolean checkEmail(String Email) {
  * @return 
  * A boolean to determine whether the email was created successfully or not 
  */
-public boolean setUserEmail(String email) {
+private boolean setUserEmail(String email) {
 	boolean success=true;
 	File newUser=new File("Accounts\\"+ email);
 	if(newUser.exists()) {//Check if the email already exists
@@ -133,7 +138,7 @@ public boolean setUserEmail(String email) {
  */
 
 public boolean signup(UserAccount newEmail) {
-		boolean success=checkEmail(newEmail.getEmail())&&setUserEmail(newEmail.getEmail());
+		boolean success=checkEmail(newEmail.getEmail())&&!(newEmail.getPassword().length()==0)&&setUserEmail(newEmail.getEmail());
 		if(!success) {
 			return success;
 		}
@@ -169,8 +174,12 @@ public boolean signup(UserAccount newEmail) {
  * 
  */
 public boolean signin(String email,String password) {
-	if(email.length()==0||password.length()==0) {
+	if(email.length()==0) {
 		JOptionPane.showMessageDialog(null,"The email field is left blank");
+		return false;
+	}
+	else if(password.length()==0){
+		JOptionPane.showMessageDialog(null, "The password field was left blank");
 		return false;
 	}
 	File existingEmail=new File("Accounts\\"+ email);
@@ -219,8 +228,8 @@ public boolean signin(String email,String password) {
 
 private boolean checkEmpty(Email newEmail) {
 	boolean isEmpty=false;
-	if(newEmail.getFolder()=="Sent") {
-		if(newEmail.getBody().length()==0||newEmail.getTo().size()==0) {
+	if(newEmail.getFolder().equals("Sent")) {
+		if((newEmail.getBody().length()==0&&newEmail.getAttachments().isEmpty())||newEmail.getTo()==null) {
 			isEmpty=true;
 		}
 	}
@@ -230,11 +239,13 @@ private boolean checkEmpty(Email newEmail) {
 	return isEmpty;
 }
 private boolean setTo(SLL to) {
-		for(int i=0;i<to.size();i++) {
+	if(to!=null) {	
+	for(int i=0;i<to.size();i++) {
 		File receiver=new File("Accounts\\"+(String)to.get(i));
 		if(!receiver.exists()) {
 			return false;
 		}
+	}
 	}
 	return true;
 }
@@ -244,45 +255,10 @@ private boolean setTo(SLL to) {
  * The email which is being composed 
  */
 private boolean setSubject(String subject) {
-	if(subject.contains("—")) {
+	if(subject.contains("ï¿½")) {
 		return false;
 	}
 	return true;
-}
-/**
- * Sets the priority of the composed email
- * @param newEmail
- * The email which is being composed 
- */
-//TODO Combobox to choose the priority of the email
-private boolean setPriority(String priority,Email newEmail) {
-	if(priority.length()==0) {
-		newEmail.setPriority(4);
-		return true;
-	}
-	try {
-	switch(Integer.parseInt(priority)) {
-	case 1:
-	case 2:
-	case 3:
-	case 4:
-		return true;
-	default:
-		
-		return false;//TODO Message to say that the priority must be 1,2,3 or 4
-	}
-	}
-	catch(Exception e) {
-		return false;//TODO Message to say that the priority must be 1,2,3 or 4 
-	}
-	}
-/**
- * Sets the attachments of the Email being composed
- * @param newEmail
- * The email being composed
- */
-private void setAttachments(SLL attachments) {
-	
 }
 
 
@@ -292,8 +268,150 @@ public boolean signup(IContact contact) {
 	return false;
 }
  
-/*public boolean compose(Email newEmail) {
-isRight=setSubject(newEmail.getSubject())||setPriority(newEmail.getPriority())||setBody(newEmail.getBody());
-//TODO Add setTo to isRight
-}*/
+public boolean compose(Email newEmail) {
+	boolean isRight=true;
+	if(checkEmpty(newEmail)) {
+		JOptionPane.showMessageDialog(null,"The Body or Receivers is left blank");
+		return false;
+	}
+	else if (!setTo(newEmail.getTo())) {
+		JOptionPane.showMessageDialog(null,"One of the receivers of the email doesn't exist");
+		return false;
+	}
+	else if(!setSubject(newEmail.getSubject())) {
+		JOptionPane.showMessageDialog(null,"You cannot enter ï¿½ inside the subject");
+		return false;
+	}
+	else {
+		if(newEmail.getFolder().equals("Sent")){
+			//Write the email information to the index file  of the sender
+			IndexFile i=new IndexFile();
+			Folder senderDes =new Folder();
+			String senderPath="Accounts\\"+newEmail.getFrom()+"\\"+"Sent"+"\\Index.txt";
+			senderDes.setPath(senderPath);
+			newEmail.setEmailFolder("Sent");
+			newEmail.setPath();
+			i.write(newEmail, senderDes);
+			
+			//Make the email folder for the sender
+			String senderEmailPath="Accounts\\"+newEmail.getFrom()+"\\"+"Sent"+"\\"+newEmail.getFrom()+newEmail.getDate();
+			File senderEmail=new File(senderEmailPath);
+			senderEmail.mkdirs();
+			
+			//make the email folder for the receivers
+			for(int j=0;j<newEmail.getTo().size();j++) {
+				String receiverEmailPath ="Accounts\\"+(String)newEmail.getTo().get(j)+"\\"+"Inbox"+"\\"+newEmail.getFrom()+newEmail.getDate();
+				File receiverEmail=new File(receiverEmailPath);
+				receiverEmail.mkdirs();
+			}
+			//Write the body of the email on the Body.txt file
+			//1-Make the body.txt file
+			String dirPath="Accounts\\"+newEmail.getFrom()+"\\"+"Sent"+"\\"+newEmail.getFrom()+newEmail.getDate();
+			String bodyPath=dirPath+"\\"+"Body.txt";
+			File body=new File(bodyPath);
+			try {
+				body.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			//2-Write the body on the file 
+				try {
+					FileWriter writer=new FileWriter(bodyPath,StandardCharsets.UTF_8,true);
+					writer.write(newEmail.getBody());
+					writer.close();
+				}
+				catch(IOException e) {
+					e.printStackTrace();
+				}
+			
+			//3-Copy the body text file to the receivers directories 
+			for(int j=0;j<newEmail.getTo().size();j++) {
+				String receiver="Accounts\\"+(String)newEmail.getTo().get(j)+"\\"+"Inbox\\"+newEmail.getFrom()+newEmail.getDate();
+				
+				File emailReceiverDirectory= new File(receiver);
+				emailReceiverDirectory.mkdirs();
+				Path receiverPath=Paths.get(receiver+"\\Body.txt");
+				try {
+					Files.copy(Paths.get(bodyPath), receiverPath);
+				} catch (IOException e) {
+					
+					e.printStackTrace();
+				}
+			}
+			
+			//Copy the attachments to the email folder and to the receiver email folder 
+			
+			if(newEmail.getAttachments()!=null) {
+			Folder sender=new Folder();
+			sender.setPath(senderEmailPath);
+			i.copyAttachments(newEmail.getAttachments(), sender);//Copy to the sender
+			
+			
+			for(int l=0;l<newEmail.getTo().size();l++) {//Copy to the receivers
+				Folder receiver=new Folder();
+				receiver.setPath("Accounts\\"+(String)newEmail.getTo().get(l)+"\\"+"Inbox"+"\\"+newEmail.getFrom()+newEmail.getDate());
+				i.copyAttachments(newEmail.getAttachments(), receiver);
+				
+			}
+			
+			}
+			//Write on the index file of the receiver
+			
+			for(int j=0;j<newEmail.getTo().size();j++) {
+				String receiverPath="Accounts\\"+(String)newEmail.getTo().get(j)+"\\"+"Inbox"+"\\Index.txt";
+				newEmail.setPath("Accounts\\"+(String)newEmail.getTo().get(j)+"\\"+"Inbox\\"+newEmail.getFrom()+newEmail.getDate());
+				Folder des=new Folder();
+				des.setPath(receiverPath);
+				i.write(newEmail, des);
+			}
+			
+		}
+		else {// if it is saved as a draft
+			IndexFile i=new IndexFile();
+			Folder senderDes=new Folder();
+			String senderPath="Accounts\\"+newEmail.getFrom()+"\\"+"Drafts"+"\\Index.txt";
+			senderDes.setPath(senderPath);
+			newEmail.setEmailFolder("Drafts");
+			newEmail.setPath();
+			i.write(newEmail, senderDes);
+			
+			
+			
+			//Make the folder for the email in the drafts folder
+			String senderEmailPath="Accounts\\"+newEmail.getFrom()+"\\"+"Drafts"+"\\"+newEmail.getFrom()+newEmail.getDate();
+			File draftEmail=new File(senderEmailPath);
+			draftEmail.mkdirs();
+			
+			//Write the body of the email on the Body.txt file
+			//1-Make the body.txt file
+			String bodyPath="Accounts\\"+newEmail.getFrom()+"\\"+"Drafts"+"\\"+newEmail.getFrom()+newEmail.getDate()+"\\"+"Body.txt";
+			File body=new File(bodyPath);
+			try {
+				body.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			//2-Write the body on the file if exists
+				if(newEmail.getBody().length()!=0) {
+				try {
+					FileWriter writer=new FileWriter(bodyPath,true);
+					writer.write(newEmail.getBody());
+					writer.close();
+				}
+				catch(IOException e) {
+					e.printStackTrace();
+				}
+				}
+				
+			//Copy the attachments to the email folder
+			if(newEmail.getAttachments()!=null) {
+			Folder sender=new Folder();
+			sender.setPath(senderEmailPath);
+			i.copyAttachments(newEmail.getAttachments(), sender);//Copy to the sender
+			}
+			
+		}
+	}
+return isRight;	
+}
 }

@@ -15,7 +15,14 @@ public void write(Email newEmail,Folder des);
  * @param des the folder containing the index file
  */
 public void writeAll(SLL newEmails,Folder des);
-
+/**
+ * 
+ * @param attachments
+ * The attachments to be copied from  the From folder to the To folder
+ * @param To
+ * The destination directory of the file
+ */
+public void copyAttachments(SLL attachments,Folder To);
 /**
  * 
  * @param des

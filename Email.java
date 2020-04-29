@@ -7,8 +7,15 @@ private String subject;//The subject of the email
 private String date;//The date on which the email was sent
 private String body;//The body of the email
 private int priority;//The priority of the email
+private String emailFolder;
 private String folder;
 private SLL attachments=new SLL();
+public void setEmailFolder(String emailFolder) {
+	this.emailFolder=emailFolder;
+}
+public String getEmailFolder() {
+	return this.emailFolder;
+}
 public void setFrom(String from) {
 	this.from=from;
 }
@@ -34,7 +41,7 @@ public void setFolder(String Folder) {
 	this.folder=Folder;
 }
 public void setPath() {//Used in the GUI
-	this.path="Accounts\\"+this.from+"\\"+this.from+this.date;
+	this.path="Accounts\\"+this.from+"\\"+this.emailFolder+"\\"+this.from+this.date;
 }
 public void setPath(String path) {//Used when reading from the index file
 	this.path=path;

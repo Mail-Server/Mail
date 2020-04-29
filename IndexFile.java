@@ -4,7 +4,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
@@ -54,31 +56,31 @@ public class IndexFile implements IIndex {
 		newIndexFile.setPath(newEmail.getPath());
 		File indexFile=new File(des.getPath());//Get the path of the index file 
 		try {
-		FileWriter writer=new FileWriter(indexFile,true);
+		FileWriter writer=new FileWriter(indexFile,StandardCharsets.UTF_8,true);
 		writer.append(newIndexFile.getPath());
-		writer.append("—");
-		writer.append(newIndexFile.getDate());
-		writer.append("—");
+		writer.append("â€”");
+		writer.append(newIndexFile.getDate().replace("-","/").replace(",",":"));
+		writer.append("â€”");
 		writer.append(newIndexFile.getFrom());
-		writer.append("—");
-		if((newEmail.getTo())==null) {//In drafts,the receivers may not be specified
+		writer.append("â€”");
+		if((newEmail.getTo())==null||newEmail.getTo().isEmpty()) {//In drafts,the receivers may not be specified
 			writer.append("NORECEIVERS");
 		}
 		else {
 			for(int i=0;i<newIndexFile.getTo().size();i++) {
 				writer.append((String)newIndexFile.getTo().get(i));
 				if(i!=(newIndexFile.getTo().size()-1))
-				writer.append("˜");
+					writer.append("Ëœ");
 			}
 		}
-		writer.append("—");
-		if((newEmail.getSubject())==null) {
+		writer.append("â€”");
+		if((newEmail.getSubject()).length()==0) {
 			writer.append("NOSUBJECT");
 		}
 		else {
 			writer.append(newIndexFile.getSubject());
 		}
-		writer.append("—");
+		writer.append("â€”");
 		writer.append(Integer.toString((newIndexFile.getPriority())));	
 		writer.append("\n");
 		writer.close();
@@ -99,17 +101,17 @@ public class IndexFile implements IIndex {
 	public IndexObject readLine(Folder des,int lineNum) {//TODO EMPTY INDEX FILE AND EMPTY BODY TEXT it should be handled in the GUI using the count lines method
 		IndexObject indexFile =new IndexObject();
 		try {
-			FileReader indexFilePath=new FileReader(des.getPath());
+			FileReader indexFilePath=new FileReader(des.getPath(),StandardCharsets.UTF_8);
 			BufferedReader reader=new BufferedReader(indexFilePath);
 			for(int i=1;i<lineNum;i++) {//We start from 1 because lineNum start from 1 also
 				reader.readLine();//Skip that line
 			}
 			String line=reader.readLine();//A string which contains the contents of a line of the index file
-			String [] Fields=line.split("—");//An array contains the fields of the index file 
+			String [] Fields=line.split("â€”");//An array contains the fields of the index file 
 			indexFile.setPath(Fields[0]);
 			indexFile.setDate(Fields[1]);
 			indexFile.setFrom(Fields[2]);
-			String [] receiversArr=Fields[3].split("˜");//separate the receivers of the email
+			String [] receiversArr=Fields[3].split("Ëœ");//separate the receivers of the email
 			//Make a SLL of the receivers
 			SLL receiversSLL=new SLL();
 			for(int i=0;i<receiversArr.length;i++) {
@@ -148,7 +150,7 @@ public class IndexFile implements IIndex {
 	 * @return
 	 * The number of lines in the text index file 
 	 */
-	private int countLines(Folder des) {
+	public static int countLines(Folder des) {
 		int lines=0;
 		try {
 			FileReader fr=new FileReader(des.getPath());
@@ -184,7 +186,7 @@ public class IndexFile implements IIndex {
 	}
 
 	@Override
-	public SLL getEmails(SLL Indexes) {
+	public  SLL getEmails(SLL Indexes) {
 		SLL Emails=new SLL();
 		for(int i=0;i<Indexes.size();i++) {
 			Email newEmail=new Email();
@@ -193,7 +195,7 @@ public class IndexFile implements IIndex {
 			//reading the body of the email and putting it into the email object
 			try {
 				File f=new File(newEmail.getPath()+"\\Body.txt");
-				FileReader fr=new FileReader(f);
+				FileReader fr=new FileReader(f,StandardCharsets.UTF_8);
 				BufferedReader reader=new BufferedReader(fr);
 				String line;
 				String Body="";
@@ -227,6 +229,19 @@ public class IndexFile implements IIndex {
 			Emails.add(newEmail);
 		}
 		return Emails;
+	}
+	@Override
+	public void copyAttachments(SLL attachments, Folder To) {
+		for(int i=0;i<attachments.size();i++) {
+			Path attach=Paths.get((String)attachments.get(i));
+			try {
+				Files.copy(attach, Paths.get(To.getPath()+"\\"+attach.getFileName().toString()));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
 	}
 	
 }
