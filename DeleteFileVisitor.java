@@ -2,12 +2,12 @@ package eg.edu.alexu.csd.datastructure.mailServer;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
-public class MyFileVisitor extends SimpleFileVisitor<Path>{
-	private SLL attachments=new SLL();
+public class DeleteFileVisitor extends SimpleFileVisitor<Path> {
 
 	@Override
 	public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
@@ -20,7 +20,7 @@ public class MyFileVisitor extends SimpleFileVisitor<Path>{
 			return FileVisitResult.CONTINUE;
 		}
 		else {
-			attachments.add(file.toString().replace("\\", "\\\\"));
+			Files.deleteIfExists(file);
 		}
 		return FileVisitResult.CONTINUE;
 	}
@@ -34,13 +34,4 @@ public class MyFileVisitor extends SimpleFileVisitor<Path>{
 	public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
 		return FileVisitResult.CONTINUE;
 	}
-	/**
-	 * 
-	 * @return
-	 * A single linked list containing the attachments in the email folder
-	 */
-	public SLL getAttachments() {
-		return this.attachments;
-	}
-
 }

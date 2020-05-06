@@ -1,5 +1,5 @@
 package eg.edu.alexu.csd.datastructure.mailServer;
 
-public interface IFilter {
+public interface ISort {
 
 }

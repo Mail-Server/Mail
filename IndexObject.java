@@ -1,3 +1,4 @@
+package eg.edu.alexu.csd.datastructure.mailServer;
 
 public class IndexObject {
 	private String path;//Path of the email
@@ -56,4 +57,5 @@ public class IndexObject {
 	public int getPriority() {
 		return this.priority;
 	}
+
 }
