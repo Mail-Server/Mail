@@ -19,6 +19,7 @@ public class App implements IApp{
 	static SLL originallist=new SLL();
 	static SLL list=new SLL();
 	static SLL listFilter = new SLL();
+	String folder ;
 		/**
 		 * Used to check if the character is a number or an alphabet.
 		 * @param  symbol .
@@ -28,7 +29,7 @@ public class App implements IApp{
 	public static void main(String[] args) throws IOException {
         App mm=new App();
         Folder f=new Folder();
-    /* File myObj = new File("C:\\Users\\hp\\eclipse-workspace\\Mail Server\\Accounts\\m@mail.com\\Inbox");
+    /* File myObj = new File("C:\\Users\\hp\\eclipse-workspace\\Mail Server\\Accounts\\f@mail.com\\Inbox\\new.txt");
         try{
             if(myObj.createNewFile()){
                 System.out.println("File created : "+myObj.getName());
@@ -37,14 +38,16 @@ public class App implements IApp{
             }
         }catch (IOException e){
             System.out.println("an error occurred ");
-        }*/
+        }
+       */
         
-        f.setPath("C:\\Users\\hp\\eclipse-workspace\\Mail Server\\Accounts\\f@mail.com\\Inbox");
+        f.setPath("Accounts\\m@mail.com\\Inbox");
         Search ss=new Search();
 		ss.setSr("math");
 		Sort m=new Sort();
 		m.setSo("date");
-		mm.setViewingOptions(f, null,m);
+		mm.setViewingOptions(f, null,null);
+       
     }
 		private boolean isAlnum(char symbol) {
 			
@@ -197,26 +200,27 @@ public class App implements IApp{
 		
 	public void moving(String target,ILinkedList mails)
 	{
-		String current=target+"\\";
-		target=target+"\\";
+		String current=target;
+		//target=target+"\\";
 		int i=0;
-		File test;
+		IndexFile index = new IndexFile();
 		while(i<mails.size())
-			{ test = (File)mails.get(i);
-			String name=test.getName();
-			Path temp;
-			String source=test.getPath();
+			{ Path temp;
+			String source=(String)mails.get(i);
+			Path emailpath=Paths.get(source);
+			String name=emailpath.getFileName().toString();
 			target +=name;
 			try {
 				temp=Files.move(Paths.get(source),Paths.get(target));
-				System.out.println("Successfully Moved file :"+name);
+				JOptionPane.showMessageDialog(null, "Successfully Moved files");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				System.out.println("Error Occurred to Move :"+name);
+				JOptionPane.showMessageDialog(null, "Error Occurred");
 			} 
 			i++;
 			target=current;
 			}  
+		 		  
 	}
 
 	@Override
@@ -299,7 +303,7 @@ public class App implements IApp{
  * The email which is being composed 
  */
 private boolean setSubject(String subject) {
-	if(subject.contains("—")) {
+	if(subject.contains("===")) {
 		return false;
 	}
 	return true;
@@ -351,75 +355,91 @@ private void setAttachments(SLL attachments) {
 	@Override
 	public void setViewingOptions(IFolder folder, IFilter filter, ISort sort) {
 		// TODO Auto-generated method stub
+		
 		Folder obj3=(Folder)folder;
-    	obj3.setPath(obj3.getPath()+"\\index.txt");
+    	obj3.setPath(obj3.getPath()+"\\Index.txt");
         Sort obj = (Sort)sort;
         Search obj2 =(Search)filter;
-        //System.out.println(obj3.getPath());
-        try {
-        FileReader ki=new FileReader(obj3.getPath());
-        Scanner scan=new Scanner(ki);
-        while (scan.hasNextLine()){
-            String data =scan.nextLine();
-            originallist.add(data);
+        if(!originallist.isEmpty())
+        {
+        	originallist.clear();
         }
-        
-        scan.close();
-    }catch (IOException e){
-        System.out.println("error");
-    }
-       
-        for(int i=0;i<originallist.size();i++) {
-        	list.add(originallist.get(i));
+        if(!list.isEmpty())
+        {
+        	list.clear();
         }
+        	try {
+                FileReader ki=new FileReader(obj3.getPath());
+                Scanner scan=new Scanner(ki);
+                while (scan.hasNextLine()){
+                    String data =scan.nextLine();
+                    originallist.add(data);
+                }
+                
+                scan.close();
+            }catch (IOException e){
+                System.out.println("error");
+            }
+               
+                for(int i=0;i<originallist.size();i++) {
+                	list.add(originallist.get(i));
+                }
 
-        System.out.print("this is the original ");
-        System.out.println(originallist.size());
-        originallist.show();
-        if(filter!=null) {
-        	String seq = obj2.getSr();
-        	String type="";
-        		if(seq.contains("/")) {
-        			type="date";
-        		}else if(seq.contains("@")) {
-        			type="from";
-        		}else {
-        			type="subject";
-        		}
-        	try {
-			    obj.quick(list, type);
-				list.show();
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        	int[] indexx=obj2.binary(list, obj2.getSr());
-        	for(int j=0;j<indexx.length;j++) {
-        		System.out.print(indexx[j]+" ");
-        	}
-        	System.out.println();
-        	for(int j=0;j<indexx.length;j++) {
-        		listFilter.add(list.get(indexx[j]));
-        	}
-        	System.out.print("this is the filtered ");
-        	listFilter.show();
-        	if(sort!=null) {
-        		try {
-    			    obj.quick(listFilter,obj.getSo());
-    			    listFilter.show();
-    			} catch (ParseException e) {
-    				// TODO Auto-generated catch block
-    				e.printStackTrace();
-    			}
-        	}
-        }else if(sort!=null) {
-        	try {
-			    obj.quick(list,obj.getSo());
-			    list.show();
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+                System.out.print("this is the original ");
+                System.out.println(originallist.size());
+             if(originallist.size()==0)
+             {
+            	 JOptionPane.showMessageDialog(null, "No Emails");
+             }
+             else
+            {
+		                	originallist.show();
+		                	if(filter!=null) 
+		                	{
+		        	String seq = obj2.getSr();
+		        	String type="";
+		        		if(seq.contains("/")) {
+		        			type="date";
+		        		}else if(seq.contains("@")) {
+		        			type="from";
+		        		}else {
+		        			type="subject";
+		        		}
+		        	try {
+					    obj.quick(list, type);
+						list.show();
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+		        	int[] indexx=obj2.binary(list, obj2.getSr());
+		        	for(int j=0;j<indexx.length;j++) {
+		        		System.out.print(indexx[j]+" ");
+		        	}
+		        	System.out.println();
+		        	for(int j=0;j<indexx.length;j++) {
+		        		listFilter.add(list.get(indexx[j]));
+		        	}
+		        	System.out.print("this is the filtered ");
+		        	listFilter.show();
+		        	if(sort!=null) {
+		        		try {
+		    			    obj.quick(listFilter,obj.getSo());
+		    			    listFilter.show();
+		    			} catch (ParseException e) {
+		    				// TODO Auto-generated catch block
+		    				e.printStackTrace();
+		    			}
+		        	}
+		        }else if(sort!=null) {
+		        	try {
+					    obj.quick(list,obj.getSo());
+					    list.show();
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+		        }
         	
         }
 		
@@ -428,80 +448,81 @@ private void setAttachments(SLL attachments) {
 	@Override
 	public IMail[] listEmails(int page) {
 		// TODO Auto-generated method stub
-		Mail[] em=new Mail[list.size()];
-    	Stacks st=new Stacks();
-    	for(int i=0;i<list.size();i++) {
-    		st.push(list.get(i));
-    	}
-    	for(int i=0;i<list.size();i++) {
-    		list.set(i, st.pop());
-    	}
-    	int start=page*10-10;
-    	int end=start+9;
-    	int j=0;
-    	int last=end;
-    	System.out.println(list.size());
-    	if(list.size()<end) {
-    		 last=list.size()-1;
-    	}
-    	while(start<=last) {
-    		String tt=(String) list.get(start);
-    		Mail m=new Mail();  		
-    		String[] ss=tt.split("—");
-    		m.setPath(ss[0]);
-    		m.setDate(ss[1]);
-    		m.setFrom(ss[2]);
-    		SLL to=new SLL();
-    		to.add(ss[3]);
-    		m.setTo(to);
-    		m.setSubject(ss[4]);
-    		m.setPriority(Integer.parseInt(ss[5]));
-    		//HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-    		//HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-    		//HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-    		//HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-    		IndexFile hah=new IndexFile();
-            try {
-                File f=new File(m.getPath()+"\\Body.txt");
-                FileReader fr=new FileReader(f);
-                BufferedReader reader=new BufferedReader(fr);
-                String line;
-                String Body="";
-                Folder des =new Folder();
-                des.setPath(f.toString());
-                if((hah.countLines(des)==0)){
-                    Body="NOTEXT";//TODO In GUI SEE how are you going to display NOTEXT on the screen to the User
-                }
-                else {
-                    while((line=reader.readLine())!=null){
-                        Body+=line;
-                        //Body+="\n";
-                    }
-                }
-                m.setBody(Body);
-                reader.close();
-            }
+			Stacks st=new Stacks();
+	    	for(int i=0;i<list.size();i++) {
+	    		st.push(list.get(i));
+	    	}
+	    	for(int i=0;i<list.size();i++) {
+	    		list.set(i, st.pop());
+	    	}
+	    	int start=page*10-10;
+	    	int end=start+9;
+	    	int j=0;
+	    	int last=end;
+	    	System.out.println("listtttt "+list.size());
+	    	if(list.size()<end) {
+	    		 last=list.size()-1;
+	    	}
+	    	Mail[] em=new Mail[(last+1)-start];
+	    	int i=0;
+	    	while(start<=last) {
+	    		String tt=(String) list.get(start);
+	    		Mail m=new Mail();  		
+	    		String[] ss=tt.split("===");
+	    		m.setPath(ss[0]);
+	    		m.setDate(ss[1]);
+	    		m.setFrom(ss[2]);
+	    		SLL to=new SLL();
+	    		to.add(ss[3]);
+	    		m.setTo(to);
+	    		m.setSubject(ss[4]);
+	    		m.setPriority(Integer.parseInt(ss[5]));
+	    		//HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+	    		//HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+	    		//HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+	    		//HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+	    		IndexFile hah=new IndexFile();
+	            try {
+	                File f=new File(m.getPath()+"\\Body.txt");
+	                FileReader fr=new FileReader(f);
+	                BufferedReader reader=new BufferedReader(fr);
+	                String line;
+	                String Body="";
+	                Folder des =new Folder();
+	                des.setPath(f.toString());
+	                if((hah.countLines(des)==0)){
+	                    Body="NOTEXT";//TODO In GUI SEE how are you going to display NOTEXT on the screen to the User
+	                }
+	                else {
+	                    while((line=reader.readLine())!=null){
+	                        Body+=line;
+	                        //Body+="\n";
+	                    }
+	                }
+	                m.setBody(Body);
+	                reader.close();
+	            }
 
-            catch(IOException e) {
-                e.printStackTrace();
-            }
-            //reading the paths of the attachments and storing them into the email object
-            MyFileVisitor visitor=new MyFileVisitor();
-            try {
-                Files.walkFileTree(Paths.get(m.getPath()),visitor);
-                m.setAttachments(visitor.getAttachments());//TODO in GUI attachments SLL is equal to null if there are no attachments in the email folder
-            } catch (IOException e) {
-                e.printStackTrace();
-                e.printStackTrace();
-            }
-            em[j]=m;
-            System.out.println(em[j].getBody());
-    		start++;
-    		j++;
-    	}
-        return em;
-		
-	}
+	            catch(IOException e) {
+	                e.printStackTrace();
+	            }
+	            //reading the paths of the attachments and storing them into the email object
+	            MyFileVisitor visitor=new MyFileVisitor();
+	            try {
+	                Files.walkFileTree(Paths.get(m.getPath()),visitor);
+	                m.setAttachments(visitor.getAttachments());//TODO in GUI attachments SLL is equal to null if there are no attachments in the email folder
+	            } catch (IOException e) {
+	                e.printStackTrace();
+	                e.printStackTrace();
+	            }
+	            em[j]=m;
+	            System.out.println(em[j].getBody());
+	    		start++;
+	    		j++;
+	    	}
+	        return em;
+		}
+    	
 
 	@Override
 	public void deleteEmails(ILinkedList mails) {
@@ -511,22 +532,23 @@ private void setAttachments(SLL attachments) {
 		   path of source and move it to path of trash and name it as it is 
 		 */
 		int i=0;
-		File test;
+		IndexFile index = new IndexFile();
 		while(i<mails.size())
-			{ test = (File)mails.get(i);
-			String name=test.getName();
-			Path temp;
-			String source=test.getPath();
-			String target="Accounts\\Trash\\";
+			{ Path temp;
+			String source=(String)mails.get(i);
+			Path emailpath=Paths.get(source);
+			String name=emailpath.getFileName().toString();
+			String target="Accounts\\"+currentUser.getEmail()+"\\Trash\\";
 			target +=name;
 			try {
 				temp=Files.move(Paths.get(source),Paths.get(target));
-				System.out.println("Successfully deleted file :"+name);
+				JOptionPane.showMessageDialog(null, "Successfully Deleted files");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				System.out.println("Error Occurred");
+				JOptionPane.showMessageDialog(null, "Error Occurred");
 				e.printStackTrace();
 			} 
+			
 			i++;
 			}  
 		 		  
@@ -557,7 +579,7 @@ private void setAttachments(SLL attachments) {
 			return false;
 		}
 		else if(!setSubject(newEmail.getSubject())) {
-			JOptionPane.showMessageDialog(null,"You cannot enter � inside the subject");
+			JOptionPane.showMessageDialog(null,"You cannot enter === inside the subject");
 			return false;
 		}
 		else {

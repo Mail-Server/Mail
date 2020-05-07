@@ -55,7 +55,7 @@ public class Search implements IFilter{
                 l = (int) stack.pop();
                 mid = l + (r - l) / 2;
         		String temp=(String)list.get(mid);
-        		String[] last=temp.split("—");
+        		String[] last=temp.split("===");
                 String hihi = last[index];
                 if (x.compareTo(hihi) == 0) {
                     li.add(p, mid);
@@ -66,7 +66,7 @@ public class Search implements IFilter{
                 	int t=mid-1,u=mid+1;
                 	while(t>=l) {
                 		String temp2=(String)list.get(t);
-                		String[] last2=temp2.split("—");
+                		String[] last2=temp2.split("===");
                         String hihi2 = last2[index];
                 		if(x.compareTo(hihi2) == 0) {
                             li.add(p, t);
@@ -77,7 +77,7 @@ public class Search implements IFilter{
                 	}
                 	while(u<=r) {
                 		String temp2=(String)list.get(u);
-                		String[] last2=temp2.split("—");
+                		String[] last2=temp2.split("===");
                         String hihi2 = last2[index];
                 		if(x.compareTo(hihi2) == 0) {
                             li.add(p, u);
@@ -116,7 +116,7 @@ public class Search implements IFilter{
         List<String> haha = new ArrayList<String>();
         for(int i=0;i<list.size();i++){
             String temp =(String)list.get(i);
-            String[] stT=temp.split("—");
+            String[] stT=temp.split("===");
             for(int j=0;j<stT.length;j++){
                 if(x.compareToIgnoreCase(stT[j])==0){
                     if(j==0)

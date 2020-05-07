@@ -217,7 +217,7 @@ public class ComposeGui extends JFrame {
 				
 			}
 		});
-		btnNewButton.setBounds(580, 35, 99, 43);
+		btnNewButton.setBounds(580, 35, 110, 43);
 		contentPane.add(btnNewButton);
 		
 		JButton btnNewButton_3 = new JButton("Save As Draft");

@@ -20,12 +20,12 @@ private String so;
     // QUICK SORT METHODS
 	static int swapSubject(ILinkedList list, int low, int high) {
 		String temp=(String)list.get(high);
-		String[] last=temp.split("—");
+		String[] last=temp.split("===");
         String pivot = last[4];
         int i = (low - 1);
         for (int j = low; j <= high - 1; j++) {
     		String temp2=(String)list.get(j);
-    		String[] last2=temp2.split("—");
+    		String[] last2=temp2.split("===");
     		String hihi=last2[4];
             if (pivot.compareToIgnoreCase(hihi)>=0) {
                 i++;
@@ -41,12 +41,12 @@ private String so;
     }
 	static int swapFrom(ILinkedList list, int low, int high) {
 		String temp=(String)list.get(high);
-		String[] last=temp.split("—");
+		String[] last=temp.split("===");
         String pivot = last[2];
         int i = (low - 1);
         for (int j = low; j <= high - 1; j++) {
     		String temp2=(String)list.get(j);
-    		String[] last2=temp2.split("—");
+    		String[] last2=temp2.split("===");
     		String hihi=last2[2];
             if (pivot.compareToIgnoreCase(hihi)>=0) {
                 i++;
@@ -62,12 +62,12 @@ private String so;
     }
 	static int swapTo(ILinkedList list, int low, int high) {
 		String temp=(String)list.get(high);
-		String[] last=temp.split("—");
+		String[] last=temp.split("===");
         String pivot = last[3];
         int i = (low - 1);
         for (int j = low; j <= high - 1; j++) {
     		String temp2=(String)list.get(j);
-    		String[] last2=temp2.split("—");
+    		String[] last2=temp2.split("===");
     		String hihi=last2[3];
             if (pivot.compareToIgnoreCase(hihi)>=0) {
                 i++;
@@ -85,9 +85,9 @@ private String so;
         SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
         for(int i=0;i<list.size();i++){
     		String temp=(String)list.get(i);
-    		String[] last2=temp.split("—");
+    		String[] last2=temp.split("===");
     		String hihi=last2[1];
-            list.set(i,last2[0]+"—"+format.parse(hihi)+"—"+last2[2]+"—"+last2[3]+"—"+last2[4]+"—"+last2[5]);
+            list.set(i,last2[0]+"==="+format.parse(hihi)+"==="+last2[2]+"==="+last2[3]+"==="+last2[4]+"==="+last2[5]);
         }
     }
     static void changeBack(ILinkedList list) throws ParseException {
@@ -95,9 +95,9 @@ private String so;
         DateFormat dat =new SimpleDateFormat("yyyy/MM/dd");
         for(int i=0;i<list.size();i++){
     		String temp=(String)list.get(i);
-    		String[] last2=temp.split("—");
+    		String[] last2=temp.split("===");
     		Date hihi=format.parse(last2[1]);
-            list.set(i,last2[0]+"—"+dat.format(hihi)+"—"+last2[2]+"—"+last2[3]+"—"+last2[4]+"—"+last2[5]);
+            list.set(i,last2[0]+"==="+dat.format(hihi)+"==="+last2[2]+"==="+last2[3]+"==="+last2[4]+"==="+last2[5]);
         }
     }
 
@@ -111,12 +111,12 @@ private String so;
         }
         int i = (low - 1);
 		String temp=(String)list.get(high);
-		String[] last=temp.split("—");
+		String[] last=temp.split("===");
 		//st.push((Object)last[1]);
         Date pivot =  format.parse(last[1]);
         for (int j = low; j <= high - 1; j++) {
     		String temp2=(String)list.get(j);
-    		String[] last2=temp2.split("—");
+    		String[] last2=temp2.split("===");
             Date yo=format.parse(last2[1]);
             if (pivot.compareTo(yo)>=0) {
                 i++;
@@ -146,7 +146,7 @@ private String so;
             j=j+4;
         for(int i=0;i<list.size();i++){
             String temp =(String)list.get(i);
-            String[] stT=temp.split("—");
+            String[] stT=temp.split("===");
             aux.add(stT[j]);
         }
         SLL aux2=new SLL();
@@ -166,9 +166,9 @@ private String so;
     static void removeTime(ILinkedList list){
         for(int i=0;i<list.size();i++){
             String temp =(String)list.get(i);
-            String[] dash=temp.split("—");
+            String[] dash=temp.split("===");
             String[] space=dash[1].split(" ");
-            list.set(i,dash[0]+"—"+space[0]+"—"+dash[2]+"—"+dash[3]+"—"+dash[4]+"—"+dash[5]);
+            list.set(i,dash[0]+"==="+space[0]+"==="+dash[2]+"==="+dash[3]+"==="+dash[4]+"==="+dash[5]);
         }
     }
     

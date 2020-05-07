@@ -85,6 +85,7 @@ public class UserGui extends JFrame {
 		inbox.setBorderPainted(false);
 		inbox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				C.folder="Inbox";
 				dispose();
 				InboxGui test = new InboxGui(C);
 				test.setVisible(true);
@@ -106,6 +107,14 @@ public class UserGui extends JFrame {
 		});
 		
 		JButton trash = new JButton("");
+		trash.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				C.folder="Trash";
+				dispose();
+				InboxGui test = new InboxGui(C);
+				test.setVisible(true);
+			}
+		});
 		Image img6= new ImageIcon(this.getClass().getResource("/trash1.png")).getImage();
 		
 		JButton btnNewButton = new JButton("");
@@ -178,6 +187,14 @@ public class UserGui extends JFrame {
 		contentPane.add(trash);
 		
 		JButton draft = new JButton("");
+		draft.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				C.folder="Draft";
+				dispose();
+				InboxGui test = new InboxGui(C);
+				test.setVisible(true);
+			}
+		});
 		
 		draft.setOpaque(false);
 		draft.setContentAreaFilled(false);
@@ -188,6 +205,14 @@ public class UserGui extends JFrame {
 		contentPane.add(plus);
 		
 		JButton sent = new JButton("");
+		sent.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				C.folder="Sent";
+				dispose();
+				InboxGui test = new InboxGui(C);
+				test.setVisible(true);
+			}
+		});
 		
 		sent.setOpaque(false);
 		sent.setContentAreaFilled(false);

@@ -1,10 +1,12 @@
 package eg.edu.alexu.csd.datastructure.mailServer;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -46,19 +48,21 @@ public class IndexFile implements IIndex{
 		return newEmail;
 	}
 	@Override
-	public void write(Mail newEmail,Folder des) {//TODO I assume that the path in the folder is the path of the index file is that right ?
+	public void write(IMail email,IFolder des) {//TODO I assume that the path in the folder is the path of the index file is that right ?
 		IndexObject newIndexFile=new IndexObject();
+		Mail newEmail=(Mail)email;
 		newIndexFile=setIndexFile(newEmail);
 		newIndexFile.setPath(newEmail.getPath());
-		File indexFile=new File(des.getPath());//Get the path of the index file 
+		File indexFile=new File(((Folder)des).getPath());//Get the path of the index file 
 		try {
-		FileWriter writer=new FileWriter(indexFile,true);
+		FileWriter fr=new FileWriter(indexFile,true);
+		BufferedWriter writer=new BufferedWriter(fr);
 		writer.append(newIndexFile.getPath());
-		writer.append("—");
-		writer.append(newIndexFile.getDate());
-		writer.append("—");
+		writer.append("===");
+		writer.append(newIndexFile.getDate().replace("-", "/").replace(",", ":"));
+		writer.append("===");
 		writer.append(newIndexFile.getFrom());
-		writer.append("—");
+		writer.append("===");
 		if((newEmail.getTo())==null) {//In drafts,the receivers may not be specified
 			writer.append("NORECEIVERS");
 		}
@@ -69,14 +73,14 @@ public class IndexFile implements IIndex{
 				writer.append("˜");
 			}
 		}
-		writer.append("—");
+		writer.append("===");
 		if((newEmail.getSubject())==null) {
 			writer.append("NOSUBJECT");
 		}
 		else {
 			writer.append(newIndexFile.getSubject());
 		}
-		writer.append("—");
+		writer.append("===");
 		writer.append(Integer.toString((newIndexFile.getPriority())));	
 		writer.append("\n");
 		writer.close();
@@ -87,23 +91,23 @@ public class IndexFile implements IIndex{
 	}
 
 	@Override
-	public void writeAll(SLL newEmails,Folder des) {
+	public void writeAll(SLL newEmails,IFolder des) {
 			for(int i=0;i<newEmails.size();i++) {
 				write((Mail)newEmails.get(i),des);
 			}
 	}
 	
 	@Override
-	public IndexObject readLine(Folder des,int lineNum) {//TODO EMPTY INDEX FILE AND EMPTY BODY TEXT it should be handled in the GUI using the count lines method
+	public IndexObject readLine(IFolder des,int lineNum) {//TODO EMPTY INDEX FILE AND EMPTY BODY TEXT it should be handled in the GUI using the count lines method
 		IndexObject indexFile =new IndexObject();
 		try {
-			FileReader indexFilePath=new FileReader(des.getPath());
+			FileReader indexFilePath=new FileReader(((Folder)des).getPath());
 			BufferedReader reader=new BufferedReader(indexFilePath);
 			for(int i=1;i<lineNum;i++) {//We start from 1 because lineNum start from 1 also
 				reader.readLine();//Skip that line
 			}
 			String line=reader.readLine();//A string which contains the contents of a line of the index file
-			String [] Fields=line.split("—");//An array contains the fields of the index file 
+			String [] Fields=line.split("===");//An array contains the fields of the index file 
 			indexFile.setPath(Fields[0]);
 			indexFile.setDate(Fields[1]);
 			indexFile.setFrom(Fields[2]);
@@ -130,7 +134,7 @@ public class IndexFile implements IIndex{
 	}
 
 	@Override
-	public SLL read10(Folder des) {//TODO In GUI special case if the index file doesn't contain 10 lines,you should check first using count lines
+	public SLL read10(IFolder des) {//TODO In GUI special case if the index file doesn't contain 10 lines,you should check first using count lines
 		SLL indices=new SLL();//A single linked list which contains 10 index objects 
 		for(int i=0;i<10;i++) {
 			IndexObject indexLine=readLine(des,i+1);//i+1 because we send the right number of the line such as 1 for the first line and 2 for the secomd 
@@ -146,10 +150,10 @@ public class IndexFile implements IIndex{
 	 * @return
 	 * The number of lines in the text index file 
 	 */
-	int countLines(Folder des) {
+	int countLines(IFolder des) {
 		int lines=0;
 		try {
-			FileReader fr=new FileReader(des.getPath());
+			FileReader fr=new FileReader(((Folder)des).getPath());
 			BufferedReader reader=new BufferedReader(fr);
 			while((reader.readLine())!=null) {
 				lines++;
@@ -162,10 +166,10 @@ public class IndexFile implements IIndex{
 		return lines;
 	}
 	@Override
-	public SLL readAll(Folder des) {
+	public SLL readAll(IFolder des) {
 		SLL indices=new SLL();//A single linked list which contains index objects  that hold all the information in the text index file
 		try {
-			FileReader fr=new FileReader(des.getPath());
+			FileReader fr=new FileReader(((Folder)des).getPath());
 			BufferedReader reader=new BufferedReader(fr);
 			int linesNum=countLines(des);
 			
@@ -227,11 +231,11 @@ public class IndexFile implements IIndex{
 		return Emails;
 	}
 	@Override
-	public void copyAttachments(SLL attachments, Folder To) {
+	public void copyAttachments(SLL attachments,IFolder To) {
 		for(int i=0;i<attachments.size();i++) {
 			Path attach=Paths.get((String)attachments.get(i));
 			try {
-				Files.copy(attach, Paths.get(To.getPath()+"\\"+attach.getFileName().toString()));
+				Files.copy(attach, Paths.get(((Folder)To).getPath()+"\\"+attach.getFileName().toString()));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -239,4 +243,139 @@ public class IndexFile implements IIndex{
 		}
 		
 	}
+	@Override
+	public void deleteAttachment(String path) {
+		File attachment=new File(path);
+		attachment.delete();
+	}
+	@Override
+	public void deleteAttachments(SLL paths) {
+		for(int i=0;i<paths.size();i++) {
+			deleteAttachment((String) paths.get(i));
+		}
+	}
+	@Override
+	public void deleteLine(IFolder des,IFolder trash,int line ) {//TODO would be used in removing contacts 
+		try {
+			File oldFile= new File(((Folder)des).getPath());
+			FileReader fr=new FileReader(oldFile);
+			BufferedReader reader=new BufferedReader(fr);
+			File trashIndex=new File(((Folder)trash).getPath());
+			String trashLine="";
+			File temp=new File("temp.txt");
+			FileWriter fw=new FileWriter(temp,true);
+			BufferedWriter bw=new BufferedWriter(fw);
+			PrintWriter writer=new PrintWriter(bw);
+			String currentLine;
+			int currentLineNum=0;
+			while((currentLine=reader.readLine())!=null) {
+				if(currentLineNum!=line) {
+				writer.println(currentLine);
+				}
+				else {
+					trashLine=currentLine;
+					FileWriter fw2=new FileWriter(trashIndex,true);
+					BufferedWriter writer2=new BufferedWriter(fw2);
+					PrintWriter pr=new PrintWriter(writer2);
+					pr.println(trashLine);
+					pr.close();
+					writer2.close();
+					fw2.close();
+				}
+				currentLineNum++;
+			}
+			writer.close();
+			bw.close();
+			fw.close();
+			reader.close();
+			fr.close();
+			oldFile.delete();
+			File rename=new File(((Folder)des).getPath());
+			temp.renameTo(rename);
+			
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	@Override
+	public void setLine(IFolder des,IMail email,int line ) {
+		try {
+			File oldFile= new File(((Folder)des).getPath());
+			FileReader fr=new FileReader(oldFile);
+			BufferedReader reader=new BufferedReader(fr);
+			File temp=new File("temp.txt");
+			FileWriter fw=new FileWriter(temp,true);
+			BufferedWriter bw=new BufferedWriter(fw);
+			PrintWriter writer=new PrintWriter(bw);
+			String currentLine;
+			int currentLineNum=0;
+			while((currentLine=reader.readLine())!=null) {
+				if(currentLineNum!=line) {
+				writer.println(currentLine);
+				}
+				else {
+					String [] fields=currentLine.split("===");
+					fields[1]=((Mail)email).getDate();
+					String to="";
+					for(int i=0;i<((Mail)email).getTo().size();i++) {
+						to+=(String)(((Mail)email).getTo().get(i));
+						if(i!=((Mail)email).getTo().size()-1)
+						to+="˜";
+					}
+					fields[3]=to;
+					fields[4]=((Mail)email).getSubject();
+					fields[5]=Integer.toString(((Mail)email).getPriority());
+					String newLine="";
+					for(int i=0;i<fields.length;i++) {
+						newLine=newLine.concat(fields[i]);
+						if(i!=fields.length-1)
+						newLine=newLine.concat("===");
+					}
+					writer.println(newLine);
+					
+				}
+				currentLineNum++;
+				
+			}
+			writer.close();
+			bw.close();
+			fw.close();
+			reader.close();
+			fr.close();
+			oldFile.delete();
+			File rename=new File(((Folder)des).getPath());//Copy the new Index file to the its directory
+		
+			//Write the new body on the index file
+			temp.renameTo(rename);
+			File body=new File(((Mail)email).getPath());
+			FileWriter fw2=new FileWriter(body);
+			BufferedWriter bw2=new BufferedWriter(fw2);
+			bw2.write(((Mail)email).getBody());
+			bw2.close();
+			fw2.close();
+		}catch(IOException e1) {
+			e1.printStackTrace();
+		}
+			//Delete the old attachment and copy the new ones 
+			try {
+				Files.walkFileTree(Paths.get(((Mail)email).getPath()), new DeleteFileVisitor());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if(((Mail)email).getAttachments()!=null) {
+				Folder sender=new Folder();
+				sender.setPath(((Mail)email).getPath());
+				IndexFile i=new IndexFile();
+				i.copyAttachments(((Mail)email).getAttachments(), sender);//Copy to the sender
+			}
+		}
+			
+	@Override
+	public void setLine(IFolder des, IContact contact, int line) {
+		
+		
+	}
+	
+	
 }
