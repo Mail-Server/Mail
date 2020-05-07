@@ -81,7 +81,8 @@ public interface IIndex {
 	 * @Param line
 	 * The line which will be deleted
 	 */
-	void deleteLine(IFolder des,IFolder trash,int line);
+	void deleteLine(IFolder des,IFolder trash,String path);
+	void deleteLine2(IFolder des,IFolder trash,int line);
 	/**
 	 * 
 	 * @param des

@@ -82,6 +82,13 @@ public class InboxGui extends JFrame {
 		            return this;
 		        }
 		    }
+			
+			JComboBox comboBox_1 = new JComboBox();
+			comboBox_1.setModel(new DefaultComboBoxModel(new String[] {"Default", "Date","From","Subject","Priority"}));
+			comboBox_1.setRenderer(new MyComboBoxRenderer("Sort By"));
+	        comboBox_1.setSelectedIndex(-1);
+			comboBox_1.setBounds(653, 11, 76, 22);
+			contentPane.add(comboBox_1);
 		
 		JButton delete = new JButton("Delete");
 		delete.addActionListener(new ActionListener() {
@@ -99,13 +106,57 @@ public class InboxGui extends JFrame {
 				{
 					if((boolean) table.getValueAt(i, 6))
 					{
-						mails.add(emi[i].getPath());
-						index.deleteLine(fold,destination,i);
-						model.removeRow(i);
-						i--;
+						mails.add(emi[table.getRowCount()-i-1].getPath());
+						index.deleteLine(fold, destination, emi[table.getRowCount()-i-1].getPath());
+						//model.removeRow(i);
+						//i--;
 					}
 				}
 				C.deleteEmails(mails);
+				int selectedsort =comboBox_1.getSelectedIndex();
+				Sort sort=new Sort();
+			switch(selectedsort)
+			{
+			case 1 :
+				sort.setSo("date");
+				break;
+				
+			case 2 :
+				sort.setSo("from");
+				break;
+				
+			case 3 :
+				sort.setSo("subject");
+				break;
+				
+			case 4 :
+				sort.setSo("priority");
+				break;
+			
+			}
+			DefaultTableModel model1 = (DefaultTableModel) table.getModel();
+			model1.setRowCount(0);
+			App ap1 = new App();
+			Folder des = new Folder();
+			des.setPath("Accounts\\"+C.currentUser.getEmail()+"\\"+C.folder);
+			if(selectedsort==0 ||selectedsort==-1)
+			{
+				ap.setViewingOptions(des, null, null);
+				
+			}
+			else
+			{
+				ap.setViewingOptions(des,null, sort);
+			}
+			Mail[] emi1=(Mail[]) ap1.listEmails(page);
+			int i=0;
+			//System.out.println("size iszzzz "+emi.length);
+			while(i<emi1.length)
+			{
+				model1.addRow(new Object[] {emi1[i].getDate(),emi1[i].getPriority(),emi1[i].getFrom(),emi1[i].getSubject(),emi1[i].getBody(),emi1[i].getAttachments(),false});
+				i++;
+			}
+			
 			}
 		});
 		
@@ -127,13 +178,57 @@ public class InboxGui extends JFrame {
 				{
 					if((boolean) table.getValueAt(i, 6))
 					{
-						mails.add(emi[i].getPath());
-						index.deleteLine(fold,trash,i);
-						model.removeRow(i);
-						i--;
+						mails.add(emi[table.getRowCount()-i-1].getPath());
+						index.deleteLine(fold, destination, emi[table.getRowCount()-i-1].getPath());
+						//model.removeRow(i);
+						//i--;
 					}
 				}
 				C.moveEmails(mails, destination);
+				int selectedsort =comboBox_1.getSelectedIndex();
+				Sort sort=new Sort();
+			switch(selectedsort)
+			{
+			case 1 :
+				sort.setSo("date");
+				break;
+				
+			case 2 :
+				sort.setSo("from");
+				break;
+				
+			case 3 :
+				sort.setSo("subject");
+				break;
+				
+			case 4 :
+				sort.setSo("priority");
+				break;
+			
+			}
+			DefaultTableModel model1 = (DefaultTableModel) table.getModel();
+			model1.setRowCount(0);
+			App ap1 = new App();
+			Folder des = new Folder();
+			des.setPath("Accounts\\"+C.currentUser.getEmail()+"\\"+C.folder);
+			if(selectedsort==0 ||selectedsort==-1)
+			{
+				ap.setViewingOptions(des, null, null);
+				
+			}
+			else
+			{
+				ap.setViewingOptions(des,null, sort);
+			}
+			Mail[] emi1=(Mail[]) ap1.listEmails(page);
+			int i=0;
+			//System.out.println("size iszzzz "+emi.length);
+			while(i<emi1.length)
+			{
+				model1.addRow(new Object[] {emi1[i].getDate(),emi1[i].getPriority(),emi1[i].getFrom(),emi1[i].getSubject(),emi1[i].getBody(),emi1[i].getAttachments(),false});
+				i++;
+			}
+			
 				
 			}
 		});
@@ -147,13 +242,7 @@ public class InboxGui extends JFrame {
 		delete.setBounds(215, 401, 89, 23);
 		contentPane.add(delete);
 		
-		
-		JComboBox comboBox_1 = new JComboBox();
-		comboBox_1.setModel(new DefaultComboBoxModel(new String[] {"Default", "Date","From","Subject","Priority"}));
-		comboBox_1.setRenderer(new MyComboBoxRenderer("Sort By"));
-        comboBox_1.setSelectedIndex(-1);
-		comboBox_1.setBounds(653, 11, 76, 22);
-		contentPane.add(comboBox_1);
+	
 		
 		
 		JScrollPane scrollPane = new JScrollPane();
