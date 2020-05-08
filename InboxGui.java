@@ -106,10 +106,10 @@ public class InboxGui extends JFrame {
 				{
 					if((boolean) table.getValueAt(i, 6))
 					{
+						//emi a5rha 10
+						//formula lw aktr mn 10 ---> (10*((list.size/10)-page+1)+(list.size%10)-i-1)
 						mails.add(emi[table.getRowCount()-i-1].getPath());
 						index.deleteLine(fold, destination, emi[table.getRowCount()-i-1].getPath());
-						//model.removeRow(i);
-						//i--;
 					}
 				}
 				C.deleteEmails(mails);
@@ -174,14 +174,14 @@ public class InboxGui extends JFrame {
 				trash.setPath("Accounts\\"+C.currentUser.getEmail()+"\\Others\\"+moved.getText()+"\\Index.txt");
 				destination.setPath("Accounts\\"+C.currentUser.getEmail()+"\\Others\\"+moved.getText()+"\\");
 				Mail[] emi=(Mail[]) ap.listEmails(page);
-				for(int i=0;i <table.getRowCount();i++)
+				for(int i=0;i<table.getRowCount();i++)
 				{
 					if((boolean) table.getValueAt(i, 6))
 					{
+						//emi a5rha 10
+						//formula lw aktr mn 10 ---> (10*((list.size/10)-page+1)+(list.size%10)-i-1)
 						mails.add(emi[table.getRowCount()-i-1].getPath());
-						index.deleteLine(fold, destination, emi[table.getRowCount()-i-1].getPath());
-						//model.removeRow(i);
-						//i--;
+						index.deleteLine2(fold, trash, table.getRowCount()-i-1);
 					}
 				}
 				C.moveEmails(mails, destination);

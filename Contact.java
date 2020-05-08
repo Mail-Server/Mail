@@ -121,4 +121,3 @@ public class Contact implements IContact {
 	
 	}
 
-

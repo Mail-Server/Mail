@@ -224,9 +224,3 @@ public class OthersGui extends JFrame {
 	}
 
 	}
-
-
-
-
-
-

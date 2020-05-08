@@ -121,5 +121,3 @@ public class Folder implements IFolder{
 		return current;
 }
 	}
-	
-

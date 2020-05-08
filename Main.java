@@ -48,14 +48,6 @@ public class Main {
 
 
 
-
-
-
-
-
-
-
-
 /*public static void makeDir()
 	{
 		File sys =new File("C:\\System");
@@ -239,4 +231,3 @@ System.out.println(diff);
 	else {
 		  System.out.print("no");
 	}*/
-    

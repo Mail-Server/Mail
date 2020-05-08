@@ -101,4 +101,5 @@ public interface IIndex {
 	 * The line which will be edited 
 	 */
 	void setLine(IFolder des,IContact contact,int line );
+
 }

@@ -140,7 +140,6 @@ public class Contacts_Gui extends JFrame {
 		contentPane.add(btnNewButton_1);
 		/*ListSelectionModel model1 = table.getSelectionModel();
 		model1.addListSelectionListener(new ListSelectionListener() {
-
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				// TODO Auto-generated method stub

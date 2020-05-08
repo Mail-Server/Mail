@@ -34,5 +34,5 @@ public interface IStack {
 	*/
 	public int size();
 
-}
 
+}

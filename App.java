@@ -1,4 +1,5 @@
 package eg.edu.alexu.csd.datastructure.mailServer;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -203,6 +204,7 @@ public class App implements IApp{
 		String current=target;
 		//target=target+"\\";
 		int i=0;
+		int flag=1;
 		IndexFile index = new IndexFile();
 		while(i<mails.size())
 			{ Path temp;
@@ -212,14 +214,24 @@ public class App implements IApp{
 			target +=name;
 			try {
 				temp=Files.move(Paths.get(source),Paths.get(target));
-				JOptionPane.showMessageDialog(null, "Successfully Moved files");
+				flag=1;
+				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				JOptionPane.showMessageDialog(null, "Error Occurred");
+				flag=0;
 			} 
 			i++;
 			target=current;
-			}  
+			} 
+		if(flag==1)
+		{
+			JOptionPane.showMessageDialog(null, "Successfully Moved files");
+		}
+		if(flag==0)
+		{
+			JOptionPane.showMessageDialog(null, "Error Occurred");
+		}
+	
 		 		  
 	}
 
@@ -532,6 +544,7 @@ private void setAttachments(SLL attachments) {
 		   path of source and move it to path of trash and name it as it is 
 		 */
 		int i=0;
+		int flag=1;
 		IndexFile index = new IndexFile();
 		while(i<mails.size())
 			{ Path temp;
@@ -542,17 +555,26 @@ private void setAttachments(SLL attachments) {
 			target +=name;
 			try {
 				temp=Files.move(Paths.get(source),Paths.get(target));
-				JOptionPane.showMessageDialog(null, "Successfully Deleted files");
+				flag=1;
+				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				JOptionPane.showMessageDialog(null, "Error Occurred");
+				
+				flag=0;
 				e.printStackTrace();
 			} 
 			
 			i++;
 			}  
 		 		  
-		   
+		   if(flag==1)
+		   {
+			   JOptionPane.showMessageDialog(null, "Successfully Deleted files");
+		   }
+		   if(flag==0)
+		   {
+			   JOptionPane.showMessageDialog(null, "Error Occurred");
+		   }
 		
 		
 	}
@@ -715,5 +737,3 @@ private void setAttachments(SLL attachments) {
 	return isRight;	
 	}
 	}
-
-
