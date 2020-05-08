@@ -27,12 +27,13 @@ import java.io.FileReader;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTextField;
 
-public class InboxGui extends JFrame {
+public class DraftGui extends JFrame {
 
 	private JPanel contentPane;
 	private JTable table;
 	int page =1;
 	private JTextField moved;
+
 
 	/**
 	 * Launch the application.
@@ -52,7 +53,7 @@ public class InboxGui extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public InboxGui(App C) {
+	public DraftGui(App C) {
 		this.setVisible(true);
 		setTitle("My Mail");
 		Image image = new ImageIcon(this.getClass().getResource("/blue-mail.png")).getImage();
@@ -521,6 +522,6 @@ public class InboxGui extends JFrame {
 		}
 		
 		
-		
 	}
+
 }
