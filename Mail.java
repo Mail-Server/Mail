@@ -10,7 +10,16 @@ public class Mail implements IMail{
 	private int priority;//The priority of the email
 	private String emailFolder;
 	private String folder;
+	private int index;
 	private SLL attachments=new SLL();
+	public void setIndex(int index)
+	{
+		this.index=index;
+	}
+	public int getIndex()
+	{
+		return this.index;
+	}
 	public void setEmailFolder(String emailFolder) {
 		this.emailFolder=emailFolder;
 	}

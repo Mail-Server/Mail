@@ -1,8 +1,6 @@
 package eg.edu.alexu.csd.datastructure.mailServer;
 
 import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
@@ -14,34 +12,25 @@ import java.time.LocalDateTime;
 public class Main {
 	
 	public static void main(String[] args)
-	{	
-			/*Folder des =new Folder();
-			des.setPath("C:\\Users\\AboodKG\\Documents\\Desktop\\Index.txt");*/
-			/*Mail newEmail=new Mail();
-			newEmail.setBody("Test");
-			newEmail.setFrom("Abood@mail.com");
-			SLL to=new SLL();
-			to.add("Yasser@mail.com");
-			newEmail.setTo(to);
-			newEmail.setSubject("Test2");
-			newEmail.setPriority(2);
-			DateTimeFormatter dtf=DateTimeFormatter.ofPattern("yyyy-MM-dd HH,mm,ss");
-			LocalDateTime now=LocalDateTime.now();
-			newEmail.setDate(dtf.format(now));
-			IndexFile i=new IndexFile();
-			newEmail.setFolder("Sent");
-			FileWriter writer= new FileWriter("",StandardCharsets.ISO_8859_1);
-			try {
-				Files.walkFileTree(Paths.get("G:\\Eclipse\\Workspace\\MailFull\\Accounts\\Abood@mail.com\\Drafts\\Abood@mail.com2020-05-05 12,47,06"), new DeleteFileVisitor());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}*/
-		File newFile=new File("C:\\Users\\AboodKG\\Documents\\Desktop\\Index.txt");
-		System.out.println(newFile.getName().substring(0,newFile.getName().indexOf('.')));
-		String S="";
-	}
+	{
+		Friends f=new Friends();
+		f.setName("Ali");
+		SLL emails=new SLL();
+		emails.add("Abood@mail.com");
+		emails.add("Yasser@mail.com");
+		App ap=new App();
+		ap.currentUser.setEmail("Abood@mail.com");
+		/*f.setEmails(emails);
+		f.addContact(f, ap);
+		f.addNewEmail("Jimmy@mail.com", 2, ap);
+		f.deleteOldEmail(ap, 0, 0);
+		f.rename("abood", "7OBBY", ap);
+		f.deleteContact(0, ap);*/
+		FriendsGui fg=new FriendsGui(ap);
+	
 	}
 	
+}
 
 
 

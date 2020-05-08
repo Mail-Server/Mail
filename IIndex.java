@@ -78,10 +78,13 @@ public interface IIndex {
 	 * 
 	 * @param des
 	 * The folder object which contains the path of the index file from which a line would be deleted
-	 * @Param line
-	 * The line which will be deleted
+	 * @Param path
+	 * The path field to identify the email in the index File
+	 * @param trash 
+	 * The trash index File
 	 */
-	void deleteLine(IFolder des,int line);
+	void deleteLine(IFolder des,IFolder trash,String path);
+	void deleteLine2(IFolder des,IFolder trash,int line);
 	/**
 	 * 
 	 * @param des
@@ -90,14 +93,11 @@ public interface IIndex {
 	 * The line which will be edited
 	 */
 	void setLine(IFolder des,IMail email,int line );
+
 	/**
 	 * 
-	 * @param des
-	 * The folder object which contains the path of the index file in which a line would be edited
-	 * @param contact
-	 * The Contact object which contains the new information of the contact after editing
-	 * @param line 
-	 * The line which will be edited 
+	 * @param path
+	 * The path of the attachment to be viewed
 	 */
-	void setLine(IFolder des,IContact contact,int line );
+	void viewAttachment(String path);
 }

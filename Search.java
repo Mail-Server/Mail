@@ -132,14 +132,4 @@ public class Search implements IFilter{
         path=haha.toArray(path);
         return path;
     }
-    public String searchAttachments(SLL attachments,String attachmentName) {
-    	String attachmentSearch=attachmentName.trim().toLowerCase();
-    	for(int i=0;i<attachments.size();i++) {
-    		if(((String)attachments.get(i)).substring(0, ((String)attachments.get(i)).indexOf('.')).toLowerCase().equals(attachmentSearch)) {
-    			return (String)attachments.get(i);
-    		}
-    	}
-    	return null;
-    }
-    
 }

@@ -1,4 +1,5 @@
 package eg.edu.alexu.csd.datastructure.mailServer;
+import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -74,7 +75,7 @@ public class IndexFile implements IIndex{
 			}
 		}
 		writer.append("===");
-		if((newEmail.getSubject())==null) {
+		if((newEmail.getSubject())==null||newEmail.getSubject().length()==0) {
 			writer.append("NOSUBJECT");
 		}
 		else {
@@ -255,11 +256,56 @@ public class IndexFile implements IIndex{
 		}
 	}
 	@Override
-	public void deleteLine(IFolder des,int line ) {//TODO would be used in removing contacts 
+	public void deleteLine(IFolder des,IFolder trash,String path ) {//TODO would be used in removing contacts 
 		try {
 			File oldFile= new File(((Folder)des).getPath());
 			FileReader fr=new FileReader(oldFile);
 			BufferedReader reader=new BufferedReader(fr);
+			File trashIndex=new File(((Folder)trash).getPath());
+			String trashLine="";
+			File temp=new File("temp.txt");
+			FileWriter fw=new FileWriter(temp,true);
+			BufferedWriter bw=new BufferedWriter(fw);
+			PrintWriter writer=new PrintWriter(bw);
+			String currentLine;
+			while((currentLine=reader.readLine())!=null) {
+				String []data =currentLine.split("===");
+				if(!(data[0].equals(path))) {
+				writer.println(currentLine);
+				}
+				else {
+					trashLine=currentLine;
+					FileWriter fw2=new FileWriter(trashIndex,true);
+					BufferedWriter writer2=new BufferedWriter(fw2);
+					PrintWriter pr=new PrintWriter(writer2);
+					pr.println(trashLine);
+					pr.close();
+					writer2.close();
+					fw2.close();
+				}
+			}
+			writer.close();
+			bw.close();
+			fw.close();
+			reader.close();
+			fr.close();
+			oldFile.delete();
+			File rename=new File(((Folder)des).getPath());
+			temp.renameTo(rename);
+			
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	@Override
+	public void deleteLine2(IFolder des,IFolder trash,int line ) {//TODO would be used in removing contacts 
+		try {
+			File oldFile= new File(((Folder)des).getPath());
+			FileReader fr=new FileReader(oldFile);
+			BufferedReader reader=new BufferedReader(fr);
+			File trashIndex=new File(((Folder)trash).getPath());
+			String trashLine="";
 			File temp=new File("temp.txt");
 			FileWriter fw=new FileWriter(temp,true);
 			BufferedWriter bw=new BufferedWriter(fw);
@@ -269,6 +315,16 @@ public class IndexFile implements IIndex{
 			while((currentLine=reader.readLine())!=null) {
 				if(currentLineNum!=line) {
 				writer.println(currentLine);
+				}
+				else {
+					trashLine=currentLine;
+					FileWriter fw2=new FileWriter(trashIndex,true);
+					BufferedWriter writer2=new BufferedWriter(fw2);
+					PrintWriter pr=new PrintWriter(writer2);
+					pr.println(trashLine);
+					pr.close();
+					writer2.close();
+					fw2.close();
 				}
 				currentLineNum++;
 			}
@@ -280,6 +336,7 @@ public class IndexFile implements IIndex{
 			oldFile.delete();
 			File rename=new File(((Folder)des).getPath());
 			temp.renameTo(rename);
+			
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -357,13 +414,17 @@ public class IndexFile implements IIndex{
 				i.copyAttachments(((Mail)email).getAttachments(), sender);//Copy to the sender
 			}
 		}
-			
+		
+
 	@Override
-	public void setLine(IFolder des, IContact contact, int line) {
-		
-		
+	public void viewAttachment(String path) {
+		File attachment=new File(path);
+		try {
+			Desktop.getDesktop().open(attachment);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-	
 	
 	
 }
