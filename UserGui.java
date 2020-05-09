@@ -126,7 +126,7 @@ public class UserGui extends JFrame {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				Contacts_Gui test = new Contacts_Gui(C);
+				FriendsGui test = new FriendsGui(C);
 				test.setVisible(true);
 			}
 			
