@@ -1,5 +1,6 @@
 package eg.edu.alexu.csd.datastructure.mailServer;
 
+import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -75,7 +76,7 @@ public class IndexFile implements IIndex{
 			}
 		}
 		writer.append("===");
-		if((newEmail.getSubject())==null) {
+		if((newEmail.getSubject())==null||newEmail.getSubject().length()==0) {
 			writer.append("NOSUBJECT");
 		}
 		else {
@@ -343,7 +344,7 @@ public class IndexFile implements IIndex{
 		}
 	}
 	@Override
-	public void setLine(IFolder des,IMail email,int line ) {
+	public void setLine(IFolder des,IMail email,String path ) {
 		try {
 			File oldFile= new File(((Folder)des).getPath());
 			FileReader fr=new FileReader(oldFile);
@@ -355,7 +356,8 @@ public class IndexFile implements IIndex{
 			String currentLine;
 			int currentLineNum=0;
 			while((currentLine=reader.readLine())!=null) {
-				if(currentLineNum!=line) {
+				String [] data=currentLine.split("===");
+				if(!data[0].equals(path)) {
 				writer.println(currentLine);
 				}
 				else {
@@ -414,12 +416,27 @@ public class IndexFile implements IIndex{
 				i.copyAttachments(((Mail)email).getAttachments(), sender);//Copy to the sender
 			}
 		}
-			
+		
+
 	@Override
-	public void setLine(IFolder des, IContact contact, int line) {
-		
-		
+	public void viewAttachment(String path) {
+		File attachment=new File(path);
+		try {
+			Desktop.getDesktop().open(attachment);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-	
+	public SLL  getAttachments(String path) {
+		SLL attachments=null;
+		try {
+			MyFileVisitor newFV=new MyFileVisitor();
+			Files.walkFileTree(Paths.get(path), newFV);
+			attachments=newFV.getAttachments();
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+		return attachments;
+	}
 	
 }

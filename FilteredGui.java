@@ -88,7 +88,7 @@ public class FilteredGui extends JFrame {
 			btnNewButton_2.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					dispose();
-					viewEmails test=new viewEmails(C);
+					viewEmails test=new viewEmails(C,new Mail());
 					test.setVisible(true);
 				}
 			});
@@ -113,14 +113,15 @@ public class FilteredGui extends JFrame {
 				IndexFile index= new IndexFile();
 				fold.setPath("Accounts\\"+C.currentUser.getEmail()+"\\"+C.folder+"\\Index.txt");
 				destination.setPath("Accounts\\"+C.currentUser.getEmail()+"\\Trash\\Index.txt");
-				Mail[] emi=(Mail[]) ap.listEmails(page);
+				Mail[] emi=(Mail[]) ap.listFilteredEmails(page);
+				Mail[] all = ap.listFilteredEmails(page);
 				for(int i=0;i <table.getRowCount();i++)
 				{
 					if((boolean) table.getValueAt(i, 6))
 					{
 						//emi a5rha 10
 						//formula lw aktr mn 10 ---> (10*((list.size/10)-page+1)+(list.size%10)-i-1)
-						mails.add(emi[table.getRowCount()-i-1].getPath());
+						mails.add(all[(10*((ap.listFilter.size()/10)-page+1)+(ap.listFilter.size()%10)-i-1)].getPath());
 						index.deleteLine(fold, destination, emi[table.getRowCount()-i-1].getPath());
 					}
 				}
@@ -160,7 +161,7 @@ public class FilteredGui extends JFrame {
 			{
 				ap.setViewingOptions(des,null, sort);
 			}
-			Mail[] emi1=(Mail[]) ap1.listEmails(page);
+			Mail[] emi1=(Mail[]) ap1.listFilteredEmails(page);
 			int i=0;
 			//System.out.println("size iszzzz "+emi.length);
 			while(i<emi1.length)
@@ -186,13 +187,14 @@ public class FilteredGui extends JFrame {
 				trash.setPath("Accounts\\"+C.currentUser.getEmail()+"\\Others\\"+moved.getText()+"\\Index.txt");
 				destination.setPath("Accounts\\"+C.currentUser.getEmail()+"\\Others\\"+moved.getText()+"\\");
 				Mail[] emi=(Mail[]) ap.listEmails(page);
+				Mail [] all=ap.listFilteredEmails(page);
 				for(int i=0;i<table.getRowCount();i++)
 				{
 					if((boolean) table.getValueAt(i, 6))
 					{
 						//emi a5rha 10
 						//formula lw aktr mn 10 ---> (10*((list.size/10)-page+1)+(list.size%10)-i-1)
-						mails.add(emi[table.getRowCount()-i-1].getPath());
+						mails.add(all[(10*((ap.listFilter.size()/10)-page+1)+(ap.listFilter.size()%10)-i-1)].getPath());
 						index.deleteLine2(fold, trash, table.getRowCount()-i-1);
 					}
 				}
@@ -232,7 +234,7 @@ public class FilteredGui extends JFrame {
 			{
 				ap.setViewingOptions(des,null, sort);
 			}
-			Mail[] emi1=(Mail[]) ap1.listEmails(page);
+			Mail[] emi1=(Mail[]) ap1.listFilteredEmails(page);
 			int i=0;
 			//System.out.println("size iszzzz "+emi.length);
 			while(i<emi1.length)
@@ -355,7 +357,7 @@ public class FilteredGui extends JFrame {
 				{
 					ap.setViewingOptions(des,null, sort);
 				}
-				Mail[] emi=(Mail[]) ap.listEmails(page);
+				Mail[] emi=(Mail[]) ap.listFilteredEmails(page);
 				int i=0;
 				//System.out.println("size iszzzz "+emi.length);
 				while(i<emi.length)
@@ -413,7 +415,7 @@ public class FilteredGui extends JFrame {
 					{
 					ap.setViewingOptions(des,null, sort);
 					}
-				Mail[] emi=(Mail[]) ap.listEmails(page);
+				Mail[] emi=(Mail[]) ap.listFilteredEmails(page);
 				int i=0;
 				//System.out.println("size iszzzz "+emi.length);
 				while(i<emi.length)
@@ -474,7 +476,7 @@ public class FilteredGui extends JFrame {
 					{
 					ap.setViewingOptions(des, null, sort);
 					}
-				Mail[] emi=(Mail[]) ap.listEmails(page);
+				Mail[] emi=(Mail[]) ap.listFilteredEmails(page);
 				int i=0;
 				//System.out.println("size iszzzz "+emi.length);
 				while(i<emi.length)
@@ -512,7 +514,7 @@ public class FilteredGui extends JFrame {
 		Folder des = new Folder();
 		des.setPath("Accounts\\"+C.currentUser.getEmail()+"\\"+C.folder);
 		ap.setViewingOptions(des, null, null);
-		Mail[] emi=(Mail[]) ap.listEmails(page);
+		Mail[] emi=(Mail[]) ap.listFilteredEmails(page);
 		int i=0;
 		//System.out.println("size is "+emi.length);
 		while(i<emi.length)

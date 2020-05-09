@@ -86,9 +86,34 @@ public class InboxGui extends JFrame {
 			JButton btnNewButton_2 = new JButton("Show");
 			btnNewButton_2.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					dispose();
-					viewEmails test=new viewEmails(C);
-					test.setVisible(true);
+					int flag=0;
+					App ap =new App();
+					int selectedmail=0;
+					Mail[] all=new Mail[ap.list.size()];
+					for(int i=0;i<all.length;i++) {
+						all[i]=(Mail)ap.list.get(i);
+					}
+					for(int i=0;i <table.getRowCount();i++)
+					{
+						if((boolean) table.getValueAt(i, 6))
+						{
+							
+							selectedmail=(10*((ap.list.size()/10)-page+1)+(ap.list.size()%10)-i-1);
+							flag=1;
+						}
+					}
+					
+					if(flag==0)
+					{
+						JOptionPane.showMessageDialog(null, "Nothing is Selected");
+					}
+					else
+					{
+						dispose();
+						viewEmails test = new viewEmails(C,all[selectedmail]);
+						test.setVisible(true);
+					}
+					
 				}
 			});
 			btnNewButton_2.setBounds(10, 11, 89, 23);

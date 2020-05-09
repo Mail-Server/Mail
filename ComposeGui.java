@@ -117,6 +117,8 @@ public class ComposeGui extends JFrame {
 		
 		 body = new JTextArea();
 			body.setBounds(136, 320, 354, 120);
+			body.setLineWrap(true);
+			body.setWrapStyleWord(true);
 			contentPane.add(body);
 		
 		

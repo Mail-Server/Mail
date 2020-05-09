@@ -534,8 +534,97 @@ private void setAttachments(SLL attachments) {
 	    	}
 	        return em;
 		}
-    	
+    
+	
+	
+	
+	
+	
+	
+	
+	public Mail[] listFilteredEmails(int page) {
+		Stacks st=new Stacks();
+    	for(int i=0;i<listFilter.size();i++) {
+    		st.push(listFilter.get(i));
+    	}
+    	for(int i=0;i<listFilter.size();i++) {
+    		listFilter.set(i, st.pop());
+    	}
+    	int start=page*10-10;
+    	int end=start+9;
+    	int j=0;
+    	int last=end;
+    	if(listFilter.size()<end) {
+    		 last=listFilter.size()-1;
+    	}
+    	Mail[] em=new Mail[(last+1)-start];
+    	int i=0;
+    	while(start<=last) {
+    		String tt=(String) listFilter.get(start);
+    		Mail m=new Mail();  		
+    		String[] ss=tt.split("===");
+    		m.setPath(ss[0]);
+    		m.setDate(ss[1]);
+    		m.setFrom(ss[2]);
+    		SLL to=new SLL();
+    		to.add(ss[3]);
+    		m.setTo(to);
+    		m.setSubject(ss[4]);
+    		m.setPriority(Integer.parseInt(ss[5]));
+    		//HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+    		//HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+    		//HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+    		//HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+    		IndexFile hah=new IndexFile();
+            try {
+                File f=new File(m.getPath()+"\\Body.txt");
+                FileReader fr=new FileReader(f);
+                BufferedReader reader=new BufferedReader(fr);
+                String line;
+                String Body="";
+                Folder des =new Folder();
+                des.setPath(f.toString());
+                if((hah.countLines(des)==0)){
+                    Body="NOTEXT";//TODO In GUI SEE how are you going to display NOTEXT on the screen to the User
+                }
+                else {
+                    while((line=reader.readLine())!=null){
+                        Body+=line;
+                        //Body+="\n";
+                    }
+                }
+                m.setBody(Body);
+                reader.close();
+            }
 
+            catch(IOException e) {
+                e.printStackTrace();
+            }
+            //reading the paths of the attachments and storing them into the email object
+            MyFileVisitor visitor=new MyFileVisitor();
+            try {
+                Files.walkFileTree(Paths.get(m.getPath()),visitor);
+                m.setAttachments(visitor.getAttachments());//TODO in GUI attachments SLL is equal to null if there are no attachments in the email folder
+            } catch (IOException e) {
+                e.printStackTrace();
+                e.printStackTrace();
+            }
+            em[j]=m;
+    		start++;
+    		j++;
+    	}
+        return em;
+    	}
+
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
 	@Override
 	public void deleteEmails(ILinkedList mails) {
 		
