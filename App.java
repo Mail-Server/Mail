@@ -1,4 +1,5 @@
 package eg.edu.alexu.csd.datastructure.mailServer;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -168,24 +169,15 @@ public class App implements IApp{
 	 */
 
 	public boolean signup(UserAccount newEmail) {
-			boolean success=checkEmail(newEmail.getEmail());
-			
+			boolean success=checkEmail(newEmail.getEmail())&&setUserEmail(newEmail.getEmail());
+			if(newEmail.getPassword()==" ")
+			{
+				return false;
+			}
 			if(!success) {
 				return success;
 			}
-			else if(newEmail.getPassword().contains("                              Password")||newEmail.getPassword().trim().length()==0)
-			{
-				JOptionPane.showMessageDialog(null,"You have not entered a password");
-				return false;
-			}
-			else if (newEmail.getName().contains("          First Name")||(newEmail.getName().contains("          Last Name"))) {
-				JOptionPane.showMessageDialog(null,"You have not entered your first or last name");
-				return false;
-			}
 			else {
-				if(!setUserEmail(newEmail.getEmail())) {
-					return false;
-				}
 				currentUser=newEmail;
 				String emailPath="Accounts\\"+newEmail.getEmail();
 				File emailInfo=new File(emailPath +"\\EmailInfo.txt");
@@ -212,6 +204,7 @@ public class App implements IApp{
 		String current=target;
 		//target=target+"\\";
 		int i=0;
+		int flag=1;
 		IndexFile index = new IndexFile();
 		while(i<mails.size())
 			{ Path temp;
@@ -221,14 +214,24 @@ public class App implements IApp{
 			target +=name;
 			try {
 				temp=Files.move(Paths.get(source),Paths.get(target));
-				JOptionPane.showMessageDialog(null, "Successfully Moved files");
+				flag=1;
+				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				JOptionPane.showMessageDialog(null, "Error Occurred");
+				flag=0;
 			} 
 			i++;
 			target=current;
-			}  
+			} 
+		if(flag==1)
+		{
+			JOptionPane.showMessageDialog(null, "Successfully Moved files");
+		}
+		if(flag==0)
+		{
+			JOptionPane.showMessageDialog(null, "Error Occurred");
+		}
+	
 		 		  
 	}
 
@@ -237,7 +240,7 @@ public class App implements IApp{
 		// TODO Auto-generated method stub
 		if(email.length()==0 || password.length()==0)
 		{
-			JOptionPane.showMessageDialog(null,"Either the Email or Password is left blank");
+			JOptionPane.showMessageDialog(null,"Either the Email or Password fields is left blank");
 			return false;
 		}
 		File existingEmail=new File("Accounts\\"+ email);
@@ -287,8 +290,8 @@ public class App implements IApp{
 
 	private boolean checkEmpty(Mail newEmail) {
 		boolean isEmpty=false;
-		if(newEmail.getFolder().equals("Sent")) {
-			if((newEmail.getBody().length()==0&&newEmail.getAttachments().isEmpty())||newEmail.getTo()==null) {
+		if(newEmail.getFolder()=="Sent") {
+			if(newEmail.getBody().length()==0||newEmail.getTo().size()==0) {
 				isEmpty=true;
 			}
 		}
@@ -298,27 +301,25 @@ public class App implements IApp{
 		return isEmpty;
 	}
 	private boolean setTo(SLL to) {
-		if(to!=null) {	
 		for(int i=0;i<to.size();i++) {
-			File receiver=new File("Accounts\\"+(String)to.get(i));
-			if(!receiver.exists()) {
-				return false;
-			}
-		}
-		}
-		return true;
-	}
-	/**
-	 * Sets the subject of the composed email
-	 * @param newEmail
-	 * The email which is being composed 
-	 */
-	private boolean setSubject(String subject) {
-		if(subject.contains("===")) {
+		File receiver=new File("Accounts\\"+(String)to.get(i));
+		if(!receiver.exists()) {
 			return false;
 		}
-		return true;
 	}
+	return true;
+}
+/**
+ * Sets the subject of the composed email
+ * @param newEmail
+ * The email which is being composed 
+ */
+private boolean setSubject(String subject) {
+	if(subject.contains("===")) {
+		return false;
+	}
+	return true;
+}
 
 /**
  * Sets the priority of the composed email
@@ -533,8 +534,97 @@ private void setAttachments(SLL attachments) {
 	    	}
 	        return em;
 		}
-    	
+    
+	
+	
+	
+	
+	
+	
+	
+	public Mail[] listFilteredEmails(int page) {
+		Stacks st=new Stacks();
+    	for(int i=0;i<listFilter.size();i++) {
+    		st.push(listFilter.get(i));
+    	}
+    	for(int i=0;i<listFilter.size();i++) {
+    		listFilter.set(i, st.pop());
+    	}
+    	int start=page*10-10;
+    	int end=start+9;
+    	int j=0;
+    	int last=end;
+    	if(listFilter.size()<end) {
+    		 last=listFilter.size()-1;
+    	}
+    	Mail[] em=new Mail[(last+1)-start];
+    	int i=0;
+    	while(start<=last) {
+    		String tt=(String) listFilter.get(start);
+    		Mail m=new Mail();  		
+    		String[] ss=tt.split("===");
+    		m.setPath(ss[0]);
+    		m.setDate(ss[1]);
+    		m.setFrom(ss[2]);
+    		SLL to=new SLL();
+    		to.add(ss[3]);
+    		m.setTo(to);
+    		m.setSubject(ss[4]);
+    		m.setPriority(Integer.parseInt(ss[5]));
+    		//HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+    		//HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+    		//HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+    		//HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+    		IndexFile hah=new IndexFile();
+            try {
+                File f=new File(m.getPath()+"\\Body.txt");
+                FileReader fr=new FileReader(f);
+                BufferedReader reader=new BufferedReader(fr);
+                String line;
+                String Body="";
+                Folder des =new Folder();
+                des.setPath(f.toString());
+                if((hah.countLines(des)==0)){
+                    Body="NOTEXT";//TODO In GUI SEE how are you going to display NOTEXT on the screen to the User
+                }
+                else {
+                    while((line=reader.readLine())!=null){
+                        Body+=line;
+                        //Body+="\n";
+                    }
+                }
+                m.setBody(Body);
+                reader.close();
+            }
 
+            catch(IOException e) {
+                e.printStackTrace();
+            }
+            //reading the paths of the attachments and storing them into the email object
+            MyFileVisitor visitor=new MyFileVisitor();
+            try {
+                Files.walkFileTree(Paths.get(m.getPath()),visitor);
+                m.setAttachments(visitor.getAttachments());//TODO in GUI attachments SLL is equal to null if there are no attachments in the email folder
+            } catch (IOException e) {
+                e.printStackTrace();
+                e.printStackTrace();
+            }
+            em[j]=m;
+    		start++;
+    		j++;
+    	}
+        return em;
+    	}
+
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
 	@Override
 	public void deleteEmails(ILinkedList mails) {
 		
@@ -543,6 +633,7 @@ private void setAttachments(SLL attachments) {
 		   path of source and move it to path of trash and name it as it is 
 		 */
 		int i=0;
+		int flag=1;
 		IndexFile index = new IndexFile();
 		while(i<mails.size())
 			{ Path temp;
@@ -553,17 +644,26 @@ private void setAttachments(SLL attachments) {
 			target +=name;
 			try {
 				temp=Files.move(Paths.get(source),Paths.get(target));
-				JOptionPane.showMessageDialog(null, "Successfully Deleted files");
+				flag=1;
+				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				JOptionPane.showMessageDialog(null, "Error Occurred");
+				
+				flag=0;
 				e.printStackTrace();
 			} 
 			
 			i++;
 			}  
 		 		  
-		   
+		   if(flag==1)
+		   {
+			   JOptionPane.showMessageDialog(null, "Successfully Deleted files");
+		   }
+		   if(flag==0)
+		   {
+			   JOptionPane.showMessageDialog(null, "Error Occurred");
+		   }
 		
 		
 	}
@@ -726,5 +826,3 @@ private void setAttachments(SLL attachments) {
 	return isRight;	
 	}
 	}
-
-

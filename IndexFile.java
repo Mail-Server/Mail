@@ -343,7 +343,7 @@ public class IndexFile implements IIndex{
 		}
 	}
 	@Override
-	public void setLine(IFolder des,IMail email,int line ) {
+	public void setLine(IFolder des,IMail email,String path ) {
 		try {
 			File oldFile= new File(((Folder)des).getPath());
 			FileReader fr=new FileReader(oldFile);
@@ -355,7 +355,8 @@ public class IndexFile implements IIndex{
 			String currentLine;
 			int currentLineNum=0;
 			while((currentLine=reader.readLine())!=null) {
-				if(currentLineNum!=line) {
+				String [] data=currentLine.split("===");
+				if(!data[0].equals(path)) {
 				writer.println(currentLine);
 				}
 				else {
@@ -425,6 +426,16 @@ public class IndexFile implements IIndex{
 			e.printStackTrace();
 		}
 	}
-	
+	public SLL  getAttachments(String path) {
+		SLL attachments=null;
+		try {
+			MyFileVisitor newFV=new MyFileVisitor();
+			Files.walkFileTree(Paths.get(path), newFV);
+			attachments=newFV.getAttachments();
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+		return attachments;
+	}
 	
 }

@@ -92,7 +92,7 @@ public interface IIndex {
 	 * @param line 
 	 * The line which will be edited
 	 */
-	void setLine(IFolder des,IMail email,int line );
+	void setLine(IFolder des,IMail email,String path );
 
 	/**
 	 * 

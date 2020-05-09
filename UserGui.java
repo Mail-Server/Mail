@@ -191,7 +191,7 @@ public class UserGui extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				C.folder="Draft";
 				dispose();
-				InboxGui test = new InboxGui(C);
+				DraftGui test = new DraftGui(C);
 				test.setVisible(true);
 			}
 		});

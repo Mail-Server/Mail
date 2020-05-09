@@ -1,6 +1,9 @@
 package eg.edu.alexu.csd.datastructure.mailServer;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.swing.JOptionPane;
 
@@ -19,7 +22,7 @@ public void setName(String name) {
 public String getName() {
 	return this.name;
 }
-public boolean addContact (IContact newContact,App ap) {//TODO In GUI The friend must have at least one email and sure he must specify the name of the friend
+public boolean addContact (IContact newContact,App ap) {
 	File path=new File("Accounts\\"+ap.currentUser.getEmail()+"\\Contacts.txt");
 	FileWriter fw;
 	boolean success=checkExistList(((Friends)newContact).getEmails());
@@ -45,7 +48,7 @@ public boolean addContact (IContact newContact,App ap) {//TODO In GUI The friend
 	}
 	return true;
 }
-public void rename(String newName,String oldName,App ap) {//TODO the user must specify a new Name
+public void rename(String newName,int oldLine,App ap) {
 try {
 File path=new File("Accounts\\"+ap.currentUser.getEmail()+"\\Contacts.txt");
 FileReader fr=new FileReader(path);
@@ -55,12 +58,13 @@ FileWriter fw=new FileWriter(temp,true);
 BufferedWriter bw=new BufferedWriter(fw);
 PrintWriter writer=new PrintWriter(bw);
 String currentLine;
+int currentLineNum=0;
 while((currentLine=reader.readLine())!=null) {
-	String [] data=currentLine.split("===");
-	if(!data[0].equals(oldName)) {
+	if(currentLineNum!=oldLine) {
 		writer.println(currentLine);
 	}
 	else {
+		String []data=currentLine.split("===");
 		data[0]=newName;
 		for(int i=0;i<data.length;i++) {
 			writer.print(data[i]);
@@ -72,7 +76,9 @@ while((currentLine=reader.readLine())!=null) {
 			}
 		}
 	}
+	currentLineNum++;
 }
+writer.flush();
 writer.close();
 bw.close();
 fw.close();
@@ -115,9 +121,9 @@ public boolean addNewEmail(String newEmail, int FriendNameLine,App ap) {//Get th
 	fw.close();
 	reader.close();
 	fr.close();
-	path.delete();
-	File dump=new File("Accounts\\"+ap.currentUser.getEmail()+"\\Contacts.txt");
-	temp.renameTo(dump);
+	Files.deleteIfExists(Paths.get(path.getAbsolutePath()));
+	Path dump=Paths.get("Accounts\\"+ap.currentUser.getEmail()+"\\Contacts.txt");
+	Files.move(Paths.get(temp.getAbsolutePath()), dump);
 	}catch(IOException e) {
 		e.printStackTrace();
 	}
@@ -141,8 +147,12 @@ public void deleteOldEmail(App ap,int FriendNameLine,int deletedEmailLine) {
 			else {
 				String []data =currentLine.split("===");
 				if(data.length==2) {
-					System.out.println("The contact must have at least one email");
-					//JOptionPane.showMessageDialog(null, "The contact must have at least one email");
+					JOptionPane.showMessageDialog(null, "The contact must have at least one email");
+					reader.close();
+					fr.close();
+					writer.close();
+					bw.close();
+					fw.close();
 					return;
 				}
 				currentLine=data[0];
@@ -263,7 +273,8 @@ public String [] getFriendEmails(int friendLine,App ap) {
 	for(int i=1;i<data.length;i++) {
 		out[i-1]=data[i];
 	}
-	
+	reader.close();
+	fr.close();
 	}catch(IOException e) {
 		e.printStackTrace();
 	}

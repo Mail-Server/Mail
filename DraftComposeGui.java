@@ -7,6 +7,9 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import eg.edu.alexu.csd.datastructure.mailServer.ComposeGui.PRIORITY;
+
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -30,8 +33,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import java.awt.Color;
 
-public class ComposeGui extends JFrame {
-	
+public class DraftComposeGui extends JFrame {
+
 
 	enum PRIORITY{
 		Urgent,High,Medium,Low;
@@ -45,6 +48,7 @@ public class ComposeGui extends JFrame {
 	private Mail newEmail;
 	private App c=new App();
 	DefaultListModel dlm=new DefaultListModel();
+
 	/**
 	 * Launch the application.
 	 */
@@ -52,7 +56,6 @@ public class ComposeGui extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					
 					
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -64,7 +67,7 @@ public class ComposeGui extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ComposeGui(App C) {
+	public DraftComposeGui(App C ,Mail all) {
 		this.setVisible(true);
 		setTitle("My Mail");
 		Image image = new ImageIcon(this.getClass().getResource("/blue-mail.png")).getImage();
@@ -80,6 +83,7 @@ public class ComposeGui extends JFrame {
 		subject = new JTextField();
 		subject.setColumns(10);
 		subject.setBounds(136, 265, 354, 31);
+		subject.setText(all.getSubject());
 		contentPane.add(subject);
 		
 		JLabel lblNewLabel = new JLabel("Recievers :");
@@ -91,9 +95,24 @@ public class ComposeGui extends JFrame {
 		lblSubject.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 20));
 		lblSubject.setBounds(27, 260, 99, 43);
 		contentPane.add(lblSubject);
-		
+		int selected=0;
+		switch (all.getPriority()){
+			case 1:
+				selected=0;
+				break;
+			case 2:
+				selected=1;
+				break;
+			case 3:
+				selected=2;
+				break;
+			case 4:
+				selected=3;
+				break;
+				
+		}
 		JComboBox priority = new JComboBox(PRIORITY.values());
-		priority.setSelectedIndex(3);
+		priority.setSelectedIndex(selected);
 		priority.setFont(new Font("Tahoma", Font.BOLD, 12));
 		priority.setToolTipText("");
 		priority.setMaximumRowCount(4);
@@ -113,10 +132,18 @@ public class ComposeGui extends JFrame {
 		
 		receivers = new JTextArea();
 		receivers.setBounds(136, 210, 354, 31);
+		String receiver="";
+		for(int i=0;i<all.getTo().size();i++) {
+			receiver+=(String)all.getTo().get(i);
+			if(i!=all.getTo().size()-1)
+			receiver+=",";
+		}
+		receivers.setText(receiver);
 		contentPane.add(receivers);
 		
 		 body = new JTextArea();
 			body.setBounds(136, 320, 354, 120);
+			body.setText(all.getBody());
 			body.setLineWrap(true);
 			body.setWrapStyleWord(true);
 			contentPane.add(body);
@@ -147,8 +174,12 @@ public class ComposeGui extends JFrame {
 		btnNewButton_1.setFont(new Font("Tahoma", Font.BOLD, 13));
 		btnNewButton_1.setBounds(547, 490, 163, 31);
 		contentPane.add(btnNewButton_1);
-		
 		 attachList = new JList();
+		 for(int i=0;i<all.getAttachments().size();i++) {
+			 File newFile=new File((String)all.getAttachments().get(i));
+			 filesSLL.add(newFile.getAbsolutePath().replace("\\", "\\\\"));
+			 dlm.addElement(newFile.getName());
+		 }
 		 attachList.setModel(dlm);
 		attachList.setBounds(580, 205, 99, 232);
 		contentPane.add(attachList);
@@ -303,5 +334,5 @@ public class ComposeGui extends JFrame {
 		
 		
 	}
-}
 
+}

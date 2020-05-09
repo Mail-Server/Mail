@@ -1,4 +1,5 @@
 package eg.edu.alexu.csd.datastructure.mailServer;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -131,5 +132,17 @@ public class Search implements IFilter{
         String[] path=new String[haha.size()];
         path=haha.toArray(path);
         return path;
+    }
+    public String searchAttachments(SLL attachments,String attachmentName) {
+    	String attachmentSearch=attachmentName.trim().toLowerCase();
+    	System.out.println(attachmentName);
+    	for(int i=0;i<attachments.size();i++) {
+    		File newFile=new File((String)attachments.get(i));
+    		System.out.println(newFile.getName());
+    		if(newFile.getName().trim().toLowerCase().substring(0,newFile.getName().indexOf('.')).equals(attachmentSearch)) {
+    			return (String)attachments.get(i);
+    		}
+    	}
+    	return null;
     }
 }

@@ -27,7 +27,10 @@ public class FriendsGui extends JFrame {
 	private JTextArea newName;
 	private JTextField name;
 	private JTextField email;
-	private JList Names;
+	private JList list;
+	private JList list_1;
+	private JTextField AddEmailText;
+	private JScrollPane scrollPane_1;
 
 	/**
 	 * Launch the application.
@@ -50,7 +53,7 @@ public class FriendsGui extends JFrame {
 	 */
 	public FriendsGui(App ap) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1225, 499);
+		setBounds(100, 100, 1317, 499);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -60,24 +63,22 @@ public class FriendsGui extends JFrame {
 		scrollPane.setBounds(71, 36, 186, 341);
 		contentPane.add(scrollPane);
 		Friends f=new Friends();
-		String friendsNames[]=f.getFriends(ap);
-		if(friendsNames==null) {
-		JOptionPane.showMessageDialog(null, "You don't have any contacts yet");
-		Names=new JList();
+		String friendslist_1[]=f.getFriends(ap);
+		if(friendslist_1==null) {
+			list_1=new JList();
 		}
 		else {
-		 Names = new JList(friendsNames);
+			list_1=new JList(friendslist_1);
 		}
-		Names.setSelectedIndex(0);
-		Names.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		scrollPane.setViewportView(Names);
+		list_1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		scrollPane.setViewportView(list_1);
 		JButton Rename = new JButton("Rename");
 		Rename.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(Names.getModel().getSize()==0) {
+				if(list_1.getModel().getSize()==0) {
 					JOptionPane.showMessageDialog(null, "You have no contacts");
 				}
-				else if(Names.isSelectionEmpty()) {
+				else if(list_1.isSelectionEmpty()) {
 					JOptionPane.showMessageDialog(null, "Select a contact");
 				}
 				else {
@@ -85,9 +86,9 @@ public class FriendsGui extends JFrame {
 					JOptionPane.showMessageDialog(null, "Enter the new name");
 				}
 				else {
-				f.rename(newName.getText(),friendsNames[Names.getSelectedIndex()], ap);
-				Names=new JList(f.getFriends(ap));
-				scrollPane.setViewportView(Names);
+				f.rename(newName.getText(),list_1.getSelectedIndex(),ap);
+				list_1=new JList(f.getFriends(ap));
+				scrollPane.setViewportView(list_1);
 				newName.setText("                     Rename With");
 				newName.setForeground(Color.gray);
 				}
@@ -99,7 +100,7 @@ public class FriendsGui extends JFrame {
 		contentPane.add(Rename);
 		
 		newName = new JTextArea();
-		newName.setBounds(710, 132, 209, 37);
+		newName.setBounds(542, 132, 209, 37);
 		contentPane.add(newName);
 		
 		JButton btnAddNewContact = new JButton("Add New Contact");
@@ -119,8 +120,8 @@ public class FriendsGui extends JFrame {
 					JOptionPane.showMessageDialog(null, "Email Doesn't Exist");
 				}
 				else {
-				Names=new JList(f.getFriends(ap));
-				scrollPane.setViewportView(Names);
+				list_1=new JList(f.getFriends(ap));
+				scrollPane.setViewportView(list_1);
 				email.setText("                  New Friend Email");
 				email.setForeground(Color.gray);
 				name.setText("                  New Friend Name");
@@ -137,20 +138,23 @@ public class FriendsGui extends JFrame {
 		JButton btnRemoveContact = new JButton("Remove Contact");
 		btnRemoveContact.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(Names.getModel().getSize()==0) {
+				if(list_1.getModel().getSize()==0) {
 						JOptionPane.showMessageDialog(null, "You have no Contacts");
 				}
-			else if(Names.isSelectionEmpty()) {
+			else if(list_1.isSelectionEmpty()) {
 				JOptionPane.showMessageDialog(null, "Select a contact");
 			}
 			else {
-			f.deleteContact(Names.getSelectedIndex(), ap);
+			
+			f.deleteContact(list_1.getSelectedIndex(), ap);
 			if(f.getFriends(ap)==null) {
-				Names=new JList();
+				list_1=new JList();
 			}
 			else 
-			Names=new JList(f.getFriends(ap));
-			scrollPane.setViewportView(Names);
+			list_1=new JList(f.getFriends(ap));
+			scrollPane.setViewportView(list_1);
+			list=new JList();
+			scrollPane_1.setViewportView(list);
 			}
 			}
 		});
@@ -161,17 +165,16 @@ public class FriendsGui extends JFrame {
 		JButton btnNewButton = new JButton("View Emails");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(Names.getModel().getSize()==0) {
+				if(list_1.getModel().getSize()==0) {
 					JOptionPane.showMessageDialog(null,"You have no contacts");
 				}
-				else if(Names.isSelectionEmpty()) {
+				else if(list_1.isSelectionEmpty()) {
 					JOptionPane.showMessageDialog(null, "Select a contact");
 				}
 				else {
-				String [] friendEmails=f.getFriendEmails(Names.getSelectedIndex(), ap);
-				dispose();
-				FriendEmailsGUI feg=new FriendEmailsGUI(friendEmails,ap,Names.getSelectedIndex());
-				feg.setVisible(true);
+				String [] friendEmails=f.getFriendEmails(list_1.getSelectedIndex(), ap);
+				list=new JList(friendEmails);
+				scrollPane_1.setViewportView(list);
 				}
 			}
 		});
@@ -223,9 +226,90 @@ public class FriendsGui extends JFrame {
 		email = new JTextField();
 		email.setForeground(Color.gray);
 		email.setColumns(10);
-		email.setBounds(882, 35, 209, 36);
+		email.setBounds(794, 40, 209, 36);
 		contentPane.add(email);
 		email.setText("                  New Friend Email");
+		
+		 scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(1067, 36, 209, 357);
+		contentPane.add(scrollPane_1);
+		
+		list = new JList();
+		scrollPane_1.setViewportView(list);
+		
+		JButton AddEmail = new JButton("Add New Email");
+		AddEmail.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(list_1.getModel().getSize()==0) {
+					JOptionPane.showMessageDialog(null, "You have no contacts");
+				}
+				else if(list_1.isSelectionEmpty()) {
+					JOptionPane.showMessageDialog(null, "Select A contact");
+				}
+				else if(AddEmailText.getText().equals("                     New Friend Email")) {
+					JOptionPane.showMessageDialog(null,"Enter The new email");
+				}
+				else if(!f.checkExist(AddEmailText.getText())) {
+					JOptionPane.showMessageDialog(null,"Email doesn't exist");
+				}
+				else {
+					f.addNewEmail(AddEmailText.getText(), list_1.getSelectedIndex(), ap);
+					list=new JList(f.getFriendEmails(list_1.getSelectedIndex(), ap));
+					scrollPane_1.setViewportView(list);
+					AddEmailText.setText("                     New Friend Email");
+					AddEmailText.setForeground(Color.gray);
+				}
+			}
+		});
+		AddEmail.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		AddEmail.setBounds(757, 354, 245, 37);
+		contentPane.add(AddEmail);
+		
+		AddEmailText = new JTextField();
+		AddEmailText.setBounds(757, 403, 245, 49);
+		contentPane.add(AddEmailText);
+		AddEmailText.setColumns(10);
+		AddEmailText.setText("                     New Friend Email");
+		AddEmailText.setForeground(Color.gray);
+		AddEmailText.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				if(AddEmailText.getText().trim().toLowerCase().equals("new friend email")) {
+					AddEmailText.setText("");
+					AddEmailText.setForeground(Color.black);
+				}
+			}
+			@Override
+			public void focusLost(FocusEvent e) {
+				if(AddEmailText.getText().trim().equals("")||AddEmailText.getText().trim().toLowerCase().equals("new friend email")) {
+					AddEmailText.setText("                     New Friend Email");
+					AddEmailText.setForeground(Color.gray);
+				}
+			}
+		});
+		
+		JButton RemoveEmail = new JButton("Remove Email");
+		RemoveEmail.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		RemoveEmail.setBounds(1067, 403, 209, 49);
+		RemoveEmail.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(list_1.getModel().getSize()==0) {
+					JOptionPane.showMessageDialog(null, "You have no contacts");
+				}
+				else if(list_1.isSelectionEmpty()) {
+					JOptionPane.showMessageDialog(null, "Select a contact");
+				}
+					else if(list.isSelectionEmpty()) {
+						JOptionPane.showMessageDialog(null, "Select an email");
+					}
+					else {
+					f.deleteOldEmail(ap, list_1.getSelectedIndex(), list.getSelectedIndex());
+					list=new JList(f.getFriendEmails(list_1.getSelectedIndex(), ap));
+					scrollPane_1.setViewportView(list);
+					}
+				}
+		});
+		contentPane.add(RemoveEmail);
 		email.addFocusListener(new FocusAdapter() {
 			@Override 
 			public void focusGained(FocusEvent e) {

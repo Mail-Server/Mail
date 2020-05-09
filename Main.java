@@ -13,21 +13,46 @@ public class Main {
 	
 	public static void main(String[] args)
 	{
-		Friends f=new Friends();
+		/*Friends f=new Friends();
 		f.setName("Ali");
 		SLL emails=new SLL();
 		emails.add("Abood@mail.com");
 		emails.add("Yasser@mail.com");
 		App ap=new App();
 		ap.currentUser.setEmail("Abood@mail.com");
-		/*f.setEmails(emails);
+		f.setEmails(emails);
 		f.addContact(f, ap);
 		f.addNewEmail("Jimmy@mail.com", 2, ap);
 		f.deleteOldEmail(ap, 0, 0);
 		f.rename("abood", "7OBBY", ap);
-		f.deleteContact(0, ap);*/
+		f.deleteContact(0, ap);
 		FriendsGui fg=new FriendsGui(ap);
-	
+		f.addNewEmail("Yasser@mail.com", 0, ap);
+		String [] arr=f.getFriendEmails(0, ap);
+		for(int i=0;i<arr.length;i++) {
+			System.out.println(arr[i]);
+		}*/
+		Mail email=new Mail();
+		email.setFrom("Abood@mail.com");
+		email.setBody("This is not the first test but have been through many tests recently and this test is one of the final ones and test test");
+		email.setPath("C:\\Users\\AboodKG\\Documents\\Desktop\\Others");
+		IndexFile ind=new IndexFile();
+		email.setAttachments(ind.getAttachments(email.getPath()));
+		email.setPriority(2);
+		email.setSubject("Test");
+		SLL to=new SLL();
+		to.add("Abood@mail.com");
+		to.add("Yasser@mail.com");
+		email.setTo(to);
+		App ap=new App();
+		ap.currentUser.setEmail("Abood@mail.com");
+		
+		Mail[] mails=ap.listFilteredEmails(0);
+		ap.currentUser.setEmail("Abood@mail.com");
+		for(int i=0;i<mails.length;i++) {
+			System.out.println(mails[i].getBody());
+		}
+
 	}
 	
 }
