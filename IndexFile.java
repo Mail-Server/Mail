@@ -124,8 +124,8 @@ public class IndexFile implements IIndex{
 			//when converting the draft into an email and a solution is to display the contents of the draft onto the composing GUI to continue
 			//composing  and you shall choose whether to overwrite the old draft or make a new one with a new Data and user can choose from all 
 			//the given dates of the drafts 
-			indexFile.setPriority(Integer.parseInt(Fields[5]));
 			reader.close();
+			indexFile.setPriority(Integer.parseInt(Fields[5]));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -214,6 +214,7 @@ public class IndexFile implements IIndex{
 				}
 				newEmail.setBody(Body);
 				reader.close();
+				fr.close();
 			}
 			
 			catch(IOException e) {
@@ -230,6 +231,7 @@ public class IndexFile implements IIndex{
 			}
 			Emails.add(newEmail);
 		}
+		System.out.println(Emails.size());
 		return Emails;
 	}
 	@Override

@@ -33,7 +33,7 @@ public class InboxGui extends JFrame {
 	private JTable table;
 	int page =1;
 	private JTextField moved;
-
+	private IndexFile ind=new IndexFile();
 	/**
 	 * Launch the application.
 	 */
@@ -89,9 +89,21 @@ public class InboxGui extends JFrame {
 					int flag=0;
 					App ap =new App();
 					int selectedmail=0;
-					Mail[] all=new Mail[ap.list.size()];
+					Folder des=new Folder();
+					des.setPath("Accounts\\"+C.currentUser.getEmail()+"\\"+"Drafts\\Index.txt");
+					SLL allSLL=ind.getEmails(ind.readAll(des));
+					Stacks s=new Stacks();
+					for(int i=0;i<allSLL.size();i++) {
+						s.push(allSLL.get(i));
+					}
+					int size=allSLL.size();
+					allSLL.clear();
+					for(int i=0;i<size;i++) {
+						allSLL.add(s.pop());
+					}
+					Mail[] all=new Mail[allSLL.size()];
 					for(int i=0;i<all.length;i++) {
-						all[i]=(Mail)ap.list.get(i);
+						all[i]=(Mail)allSLL.get(i);
 					}
 					for(int i=0;i <table.getRowCount();i++)
 					{
@@ -138,13 +150,29 @@ public class InboxGui extends JFrame {
 				fold.setPath("Accounts\\"+C.currentUser.getEmail()+"\\"+C.folder+"\\Index.txt");
 				destination.setPath("Accounts\\"+C.currentUser.getEmail()+"\\Trash\\Index.txt");
 				Mail[] emi=(Mail[]) ap.listEmails(page);
+				Folder deso=new Folder();
+				deso.setPath("Accounts\\"+C.currentUser.getEmail()+"\\"+"Drafts\\Index.txt");
+				SLL allSLL=ind.getEmails(ind.readAll(deso));
+				Stacks s=new Stacks();
+				for(int i=0;i<allSLL.size();i++) {
+					s.push(allSLL.get(i));
+				}
+				int size=allSLL.size();
+				allSLL.clear();
+				for(int i=0;i<size;i++) {
+					allSLL.add(s.pop());
+				}
+				Mail[] all=new Mail[allSLL.size()];
+				for(int i=0;i<all.length;i++) {
+					all[i]=(Mail)allSLL.get(i);
+				}
 				for(int i=0;i <table.getRowCount();i++)
 				{
 					if((boolean) table.getValueAt(i, 6))
 					{
 						//emi a5rha 10
-						//formula lw aktr mn 10 ---> (10*((list.size/10)-page+1)+(list.size%10)-i-1)
-						mails.add(emi[table.getRowCount()-i-1].getPath());
+						//formula lw aktr mn 10 ---> (10*((ap.list.size()/10)-page+1)+(ap.list.size()%10)-i-1)
+						mails.add(all[(10*((ap.list.size()/10)-page+1)+(ap.list.size()%10)-i-1)].getPath());
 						index.deleteLine(fold, destination, emi[table.getRowCount()-i-1].getPath());
 					}
 				}
@@ -210,13 +238,29 @@ public class InboxGui extends JFrame {
 				trash.setPath("Accounts\\"+C.currentUser.getEmail()+"\\Others\\"+moved.getText()+"\\Index.txt");
 				destination.setPath("Accounts\\"+C.currentUser.getEmail()+"\\Others\\"+moved.getText()+"\\");
 				Mail[] emi=(Mail[]) ap.listEmails(page);
+				Folder deso=new Folder();
+				deso.setPath("Accounts\\"+C.currentUser.getEmail()+"\\"+"Drafts\\Index.txt");
+				SLL allSLL=ind.getEmails(ind.readAll(deso));
+				Stacks s=new Stacks();
+				for(int i=0;i<allSLL.size();i++) {
+					s.push(allSLL.get(i));
+				}
+				int size=allSLL.size();
+				allSLL.clear();
+				for(int i=0;i<size;i++) {
+					allSLL.add(s.pop());
+				}
+				Mail[] all=new Mail[allSLL.size()];
+				for(int i=0;i<all.length;i++) {
+					all[i]=(Mail)allSLL.get(i);
+				}
 				for(int i=0;i<table.getRowCount();i++)
 				{
 					if((boolean) table.getValueAt(i, 6))
 					{
 						//emi a5rha 10
 						//formula lw aktr mn 10 ---> (10*((list.size/10)-page+1)+(list.size%10)-i-1)
-						mails.add(emi[table.getRowCount()-i-1].getPath());
+						mails.add(all[(10*((ap.list.size()/10)-page+1)+(ap.list.size()%10)-i-1)].getPath());
 						index.deleteLine2(fold, trash, table.getRowCount()-i-1);
 					}
 				}

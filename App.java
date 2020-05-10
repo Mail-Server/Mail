@@ -148,8 +148,10 @@ public class App implements IApp{
 				File newDirectory=new File(newUser.getPath() + dir);
 				newDirectory.mkdirs();
 				File indexFile=new File(newDirectory.getPath()+"\\Index.txt");
+				File contactsFile=new File("Accounts\\"+email+"\\Contacts.txt");
 				try {
 				indexFile.createNewFile();
+				contactsFile.createNewFile();
 				}
 				catch(IOException e) {
 					e.printStackTrace();
@@ -381,7 +383,9 @@ private void setAttachments(SLL attachments) {
         	list.clear();
         }
         	try {
+        		System.out.println(obj3.getPath());
                 FileReader ki=new FileReader(obj3.getPath());
+                
                 Scanner scan=new Scanner(ki);
                 while (scan.hasNextLine()){
                     String data =scan.nextLine();

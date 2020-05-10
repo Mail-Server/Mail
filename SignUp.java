@@ -79,6 +79,14 @@ public class SignUp extends JFrame {
 					
 					JOptionPane.showMessageDialog(null, "Password and confirm password fields are different");	
 				}
+				else if(FirstName.getText().trim().equals("First Name")){
+			JOptionPane.showMessageDialog(null, "Enter Your First Name");
+				}
+				else if (LastName.getText().trim().equals("Last Name"))
+					JOptionPane.showMessageDialog(null, "Enter Your Last Name");
+				else if(Password.getText().trim().equals("Password")||ConfirmPassword.getText().trim().equals("Confirm Password")) {
+					JOptionPane.showMessageDialog(null, "Enter Password and Confirm it");
+				}
 				else if(C.signup(acc)) {
 					JOptionPane.showMessageDialog(null, "You have created your account successfully");
 					dispose();
