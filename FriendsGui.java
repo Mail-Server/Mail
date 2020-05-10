@@ -319,6 +319,17 @@ public class FriendsGui extends JFrame {
 				}
 		});
 		contentPane.add(RemoveEmail);
+		
+		JButton btnNewButton_1 = new JButton("Return");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				UserGui test = new UserGui(ap);
+				test.setVisible(true);
+			}
+		});
+		btnNewButton_1.setBounds(71, 416, 89, 23);
+		contentPane.add(btnNewButton_1);
 		email.addFocusListener(new FocusAdapter() {
 			@Override 
 			public void focusGained(FocusEvent e) {
