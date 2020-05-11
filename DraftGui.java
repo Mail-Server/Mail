@@ -114,7 +114,7 @@ public class DraftGui extends JFrame {
 						{
 							
 							selectedmail=(10*((ap.list.size()/10)-page+1)+(ap.list.size()%10)-i-1);
-							flag=1;
+							flag++;
 						}
 					}
 					
@@ -122,11 +122,15 @@ public class DraftGui extends JFrame {
 					{
 						JOptionPane.showMessageDialog(null, "Nothing is Selected");
 					}
-					else
+					else if (flag==1)
 					{
 						dispose();
 						ViewEmailsDraft test = new ViewEmailsDraft(C,all[selectedmail]);
 						test.setVisible(true);
+					}
+					else
+					{
+						JOptionPane.showMessageDialog(null, "There is more than one Email selected");
 					}
 					
 				}
@@ -169,7 +173,7 @@ public class DraftGui extends JFrame {
 						{
 							
 							selectedmail=(10*((ap.list.size()/10)-page+1)+(ap.list.size()%10)-i-1);
-							flag=1;
+							flag++;
 						}
 					}
 					
@@ -177,11 +181,15 @@ public class DraftGui extends JFrame {
 					{
 						JOptionPane.showMessageDialog(null, "Nothing is Selected");
 					}
-					else
+					else if (flag==1)
 					{
 						dispose();
 						DraftComposeGui test = new DraftComposeGui(C,all[selectedmail]);
 						test.setVisible(true);
+					}
+					else
+					{
+						JOptionPane.showMessageDialog(null, "There is more than one Email selected");
 					}
 					
 				}

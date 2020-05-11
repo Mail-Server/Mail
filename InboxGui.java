@@ -111,7 +111,7 @@ public class InboxGui extends JFrame {
 						{
 							
 							selectedmail=(10*((ap.list.size()/10)-page+1)+(ap.list.size()%10)-i-1);
-							flag=1;
+							flag++;
 						}
 					}
 					
@@ -119,11 +119,15 @@ public class InboxGui extends JFrame {
 					{
 						JOptionPane.showMessageDialog(null, "Nothing is Selected");
 					}
-					else
+					else if (flag==1)
 					{
 						dispose();
 						viewEmails test = new viewEmails(C,all[selectedmail]);
 						test.setVisible(true);
+					}
+					else
+					{
+						JOptionPane.showMessageDialog(null, "There is more than one Email Selected");
 					}
 					
 				}
