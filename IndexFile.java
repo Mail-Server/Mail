@@ -193,7 +193,7 @@ public class IndexFile implements IIndex{
 		for(int i=0;i<Indexes.size();i++) {
 			Mail newEmail=new Mail();
 			newEmail=setEmail((IndexObject)Indexes.get(i));
-			
+			//System.out.println(newEmail.getPath());
 			//reading the body of the email and putting it into the email object
 			try {
 				File f=new File(newEmail.getPath()+"\\Body.txt");
@@ -231,7 +231,7 @@ public class IndexFile implements IIndex{
 			}
 			Emails.add(newEmail);
 		}
-		System.out.println(Emails.size());
+		//System.out.println(Emails.size());
 		return Emails;
 	}
 	@Override
@@ -275,8 +275,10 @@ public class IndexFile implements IIndex{
 				String []data =currentLine.split("===");
 				if(!(data[0].equals(path))) {
 				writer.println(currentLine);
+				
 				}
 				else {
+				
 					trashLine=currentLine;
 					FileWriter fw2=new FileWriter(trashIndex,true);
 					BufferedWriter writer2=new BufferedWriter(fw2);
@@ -294,7 +296,9 @@ public class IndexFile implements IIndex{
 			fr.close();
 			oldFile.delete();
 			File rename=new File(((Folder)des).getPath());
-			temp.renameTo(rename);
+			
+			if(!temp.renameTo(rename)) {
+			}
 			
 			
 		} catch (IOException e) {
@@ -303,11 +307,14 @@ public class IndexFile implements IIndex{
 	}
 	@Override
 	public void deleteLine2(IFolder des,IFolder trash,int line ) {//TODO would be used in removing contacts 
+		File test =new File(((Folder)trash).getPath());
+		if(test.exists())
+		{
 		try {
 			File oldFile= new File(((Folder)des).getPath());
 			FileReader fr=new FileReader(oldFile);
 			BufferedReader reader=new BufferedReader(fr);
-			File trashIndex=new File(((Folder)trash).getPath());
+			File trashIndex=new File(((Folder)trash).getPath()+"\\Index.txt");
 			String trashLine="";
 			File temp=new File("temp.txt");
 			FileWriter fw=new FileWriter(temp,true);
@@ -343,6 +350,10 @@ public class IndexFile implements IIndex{
 			
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		}
+		else {
+			
 		}
 	}
 	@Override

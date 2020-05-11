@@ -204,7 +204,10 @@ public class App implements IApp{
 	public void moving(String target,ILinkedList mails)
 	{
 		String current=target;
-		//target=target+"\\";
+		File test=new File(target);
+				if(test.exists())
+				{
+		target+="\\";
 		int i=0;
 		int flag=1;
 		IndexFile index = new IndexFile();
@@ -214,6 +217,7 @@ public class App implements IApp{
 			Path emailpath=Paths.get(source);
 			String name=emailpath.getFileName().toString();
 			target +=name;
+			System.out.println(target);
 			try {
 				temp=Files.move(Paths.get(source),Paths.get(target));
 				flag=1;
@@ -222,6 +226,7 @@ public class App implements IApp{
 				// TODO Auto-generated catch block
 				flag=0;
 			} 
+			
 			i++;
 			target=current;
 			} 
@@ -233,7 +238,11 @@ public class App implements IApp{
 		{
 			JOptionPane.showMessageDialog(null, "Error Occurred");
 		}
-	
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(null, "No such Folder");
+				}
 		 		  
 	}
 
@@ -293,7 +302,7 @@ public class App implements IApp{
 	private boolean checkEmpty(Mail newEmail) {
 		boolean isEmpty=false;
 		if(newEmail.getFolder()=="Sent") {
-			if(newEmail.getBody().length()==0||newEmail.getTo().size()==0) {
+			if(newEmail.getBody().length()==0||newEmail.getTo()==null) {
 				isEmpty=true;
 			}
 		}
@@ -383,7 +392,6 @@ private void setAttachments(SLL attachments) {
         	list.clear();
         }
         	try {
-        		System.out.println(obj3.getPath());
                 FileReader ki=new FileReader(obj3.getPath());
                 
                 Scanner scan=new Scanner(ki);
@@ -394,22 +402,20 @@ private void setAttachments(SLL attachments) {
                 
                 scan.close();
             }catch (IOException e){
-                System.out.println("error");
+               e.printStackTrace();
             }
                
                 for(int i=0;i<originallist.size();i++) {
                 	list.add(originallist.get(i));
                 }
 
-                System.out.print("this is the original ");
-                System.out.println(originallist.size());
              if(originallist.size()==0)
              {
             	 JOptionPane.showMessageDialog(null, "No Emails");
              }
              else
             {
-		                	originallist.show();
+		                
 		                	if(filter!=null) 
 		                	{
 		        	String seq = obj2.getSr();
@@ -423,25 +429,22 @@ private void setAttachments(SLL attachments) {
 		        		}
 		        	try {
 					    obj.quick(list, type);
-						list.show();
+						
 					} catch (ParseException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 		        	int[] indexx=obj2.binary(list, obj2.getSr());
-		        	for(int j=0;j<indexx.length;j++) {
-		        		System.out.print(indexx[j]+" ");
-		        	}
-		        	System.out.println();
+		        	
 		        	for(int j=0;j<indexx.length;j++) {
 		        		listFilter.add(list.get(indexx[j]));
 		        	}
-		        	System.out.print("this is the filtered ");
-		        	listFilter.show();
+		        
+		        	
 		        	if(sort!=null) {
 		        		try {
 		    			    obj.quick(listFilter,obj.getSo());
-		    			    listFilter.show();
+		    			    
 		    			} catch (ParseException e) {
 		    				// TODO Auto-generated catch block
 		    				e.printStackTrace();
@@ -450,7 +453,7 @@ private void setAttachments(SLL attachments) {
 		        }else if(sort!=null) {
 		        	try {
 					    obj.quick(list,obj.getSo());
-					    list.show();
+					    
 					} catch (ParseException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -475,7 +478,6 @@ private void setAttachments(SLL attachments) {
 	    	int end=start+9;
 	    	int j=0;
 	    	int last=end;
-	    	System.out.println("listtttt "+list.size());
 	    	if(list.size()<end) {
 	    		 last=list.size()-1;
 	    	}
@@ -532,7 +534,6 @@ private void setAttachments(SLL attachments) {
 	                e.printStackTrace();
 	            }
 	            em[j]=m;
-	            System.out.println(em[j].getBody());
 	    		start++;
 	    		j++;
 	    	}
@@ -646,7 +647,9 @@ private void setAttachments(SLL attachments) {
 			String name=emailpath.getFileName().toString();
 			String target="Accounts\\"+currentUser.getEmail()+"\\Trash\\";
 			target +=name;
+			
 			try {
+				
 				temp=Files.move(Paths.get(source),Paths.get(target));
 				flag=1;
 				
@@ -677,6 +680,7 @@ private void setAttachments(SLL attachments) {
 		// TODO Auto-generated method stub
 		Folder obj1 = (Folder) des;
 		String target=obj1.getPath();
+		
 		moving(target,mails);
 		
 	}
@@ -689,7 +693,7 @@ private void setAttachments(SLL attachments) {
 			JOptionPane.showMessageDialog(null,"The Body or Receivers is left blank");
 			return false;
 		}
-		else if (!setTo(newEmail.getTo())) {
+		else if (newEmail.getFolder().equals("")&&!setTo(newEmail.getTo())) {
 			JOptionPane.showMessageDialog(null,"One of the receivers of the email doesn't exist");
 			return false;
 		}
@@ -698,6 +702,10 @@ private void setAttachments(SLL attachments) {
 			return false;
 		}
 		else {
+			for(int i=0;i<newEmail.getTo().size();i++) {
+				if(!checkEmail((String)newEmail.getTo().get(i)))
+				return false;
+			}
 			if(newEmail.getFolder().equals("Sent")){
 				//Write the email information to the index file  of the sender
 				IndexFile i=new IndexFile();

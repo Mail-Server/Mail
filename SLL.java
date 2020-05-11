@@ -31,10 +31,9 @@ public class SLL implements ILinkedList{
             throw new NullPointerException();
         }else{
         while(node.next !=null){
-            System.out.println(node.data);
+            
             node=node.next;
         }
-        System.out.println(node.data);
     }}
 
     public void insertAtStart(Object data){ // insert element at the start
@@ -150,7 +149,6 @@ public class SLL implements ILinkedList{
         for(int i = fromIndex; i<=toIndex; i++){
             kilo.add(list.get(i));
         }
-        System.out.println(kilo.size());
         kilo.show();
         return kilo;
     }

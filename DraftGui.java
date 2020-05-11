@@ -34,7 +34,7 @@ public class DraftGui extends JFrame {
 	int page =1;
 	private JTextField moved;
 	private IndexFile ind=new IndexFile();
-
+	Mail [] all=null;
 
 	/**
 	 * Launch the application.
@@ -54,10 +54,31 @@ public class DraftGui extends JFrame {
 	/**
 	 * Create the frame.
 	 */
+	SLL allSLL=null;
 	public DraftGui(App C) {
 		this.setVisible(true);
-		setTitle("My Mail");
 		C.folder="Drafts";
+		Folder deso=new Folder();
+		deso.setPath("Accounts\\"+C.currentUser.getEmail()+"\\"+C.folder+"\\Index.txt");
+		 allSLL=ind.getEmails(ind.readAll(deso));
+		Stacks s=new Stacks();
+		for(int i=0;i<allSLL.size();i++) {
+			s.push(allSLL.get(i));
+		}
+			int size=allSLL.size();
+		for(int i=0;i<size;i++) {
+
+			allSLL.add(s.pop());
+			
+		}
+
+		 all=new Mail[allSLL.size()];
+		for(int i=0;i<all.length;i++) {
+			all[i]=(Mail)allSLL.get(i);
+		}
+
+		setTitle("My Mail");
+		
 		Image image = new ImageIcon(this.getClass().getResource("/blue-mail.png")).getImage();
 		this.setIconImage(image);
 		this.setResizable(false);
@@ -92,22 +113,7 @@ public class DraftGui extends JFrame {
 					int flag=0;
 					App ap =new App();
 					int selectedmail=0;
-					Folder des=new Folder();
-					des.setPath("Accounts\\"+C.currentUser.getEmail()+"\\"+"Drafts\\Index.txt");
-					SLL allSLL=ind.getEmails(ind.readAll(des));
-					Stacks s=new Stacks();
-					int size=allSLL.size();
-					for(int i=0;i<allSLL.size();i++) {
-						s.push(allSLL.get(i));
-					}
-					allSLL.clear();
-					for(int i=0;i<size;i++) {
-						allSLL.add(s.pop());
-					}
-					Mail[] all=new Mail[allSLL.size()];
-					for(int i=0;i<all.length;i++) {
-						all[i]=(Mail)allSLL.get(i);
-					}
+					
 					for(int i=0;i <table.getRowCount();i++)
 					{
 						if((boolean) table.getValueAt(i, 6))
@@ -148,25 +154,14 @@ public class DraftGui extends JFrame {
 			JButton btnNewButton_3 = new JButton("Compose");
 			btnNewButton_3.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					if(allSLL==null||allSLL.size()==0) {
+						JOptionPane.showMessageDialog(null, "No Emails");
+					}
+					else {
 					int flag=0;
 					App ap =new App();
 					int selectedmail=0;
-					Folder des=new Folder();
-					des.setPath("Accounts\\"+C.currentUser.getEmail()+"\\"+"Drafts\\Index.txt");
-					SLL allSLL=ind.getEmails(ind.readAll(des));
-					Stacks s=new Stacks();
-					for(int i=0;i<allSLL.size();i++) {
-						s.push(allSLL.get(i));
-					}
-					int size=allSLL.size();
-					allSLL.clear();
-					for(int i=0;i<size;i++) {
-						allSLL.add(s.pop());
-					}
-					Mail[] all=new Mail[allSLL.size()];
-					for(int i=0;i<all.length;i++) {
-						all[i]=(Mail)allSLL.get(i);
-					}
+					
 					for(int i=0;i <table.getRowCount();i++)
 					{
 						if((boolean) table.getValueAt(i, 6))
@@ -181,7 +176,7 @@ public class DraftGui extends JFrame {
 					{
 						JOptionPane.showMessageDialog(null, "Nothing is Selected");
 					}
-					else if (flag==1)
+					else if(flag==1)
 					{
 						dispose();
 						DraftComposeGui test = new DraftComposeGui(C,all[selectedmail]);
@@ -191,7 +186,7 @@ public class DraftGui extends JFrame {
 					{
 						JOptionPane.showMessageDialog(null, "There is more than one Email selected");
 					}
-					
+					}
 				}
 			});
 			btnNewButton_3.setBounds(215, 11, 89, 23);
@@ -201,6 +196,16 @@ public class DraftGui extends JFrame {
 		JButton delete = new JButton("Delete");
 		delete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				int flag=0;
+				for(int i=0;i<table.getRowCount();i++)
+				{
+					if((boolean) table.getValueAt(i, 6))
+					{
+						flag=1;
+					}
+				}if(flag==1)
+				{
+					
 				DefaultTableModel model = (DefaultTableModel) table.getModel();
 				SLL mails = new SLL();
 				App ap =new App();
@@ -210,33 +215,38 @@ public class DraftGui extends JFrame {
 				fold.setPath("Accounts\\"+C.currentUser.getEmail()+"\\"+C.folder+"\\Index.txt");
 				destination.setPath("Accounts\\"+C.currentUser.getEmail()+"\\Trash\\Index.txt");
 				Mail[] emi=(Mail[]) ap.listEmails(page);
-				Folder deso=new Folder();
-				deso.setPath("Accounts\\"+C.currentUser.getEmail()+"\\"+"Drafts\\Index.txt");
-				SLL allSLL=ind.getEmails(ind.readAll(deso));
-				Stacks s=new Stacks();
-				for(int i=0;i<allSLL.size();i++) {
-					s.push(allSLL.get(i));
-				}
-				int size=allSLL.size();
-				allSLL.clear();
-				for(int i=0;i<size;i++) {
-					allSLL.add(s.pop());
-				}
-				Mail[] all=new Mail[allSLL.size()];
-				for(int i=0;i<all.length;i++) {
-					all[i]=(Mail)allSLL.get(i);
-				}
+				
 				for(int i=0;i <table.getRowCount();i++)
 				{
 					if((boolean) table.getValueAt(i, 6))
 					{
+		
 						//emi a5rha 10
 						//formula lw aktr mn 10 ---> (10*((list.size/10)-page+1)+(list.size%10)-i-1)
+						
 						mails.add(all[(10*((ap.list.size()/10)-page+1)+(ap.list.size()%10)-i-1)].getPath());
-						index.deleteLine(fold, destination, emi[table.getRowCount()-i-1].getPath());
+						index.deleteLine(fold, destination,(all[(10*((ap.list.size()/10)-page+1)+(ap.list.size()%10)-i-1)].getPath()));
 					}
 				}
 				C.deleteEmails(mails);
+				Folder deso=new Folder();
+				deso.setPath("Accounts\\"+C.currentUser.getEmail()+"\\"+C.folder+"\\Index.txt");
+				 allSLL=ind.getEmails(ind.readAll(deso));
+				allSLL.size();
+				Stacks s=new Stacks();
+				for(int i=0;i<allSLL.size();i++) {
+					s.push(allSLL.get(i));
+				}
+				
+					
+					int size=allSLL.size();
+				for(int i=0;i<size;i++) {
+					allSLL.add(s.pop());
+				}
+				 all=new Mail[allSLL.size()];
+				for(int i=0;i<all.length;i++) {
+					all[i]=(Mail)allSLL.get(i);
+				}
 				int selectedsort =comboBox_1.getSelectedIndex();
 				Sort sort=new Sort();
 			switch(selectedsort)
@@ -280,13 +290,25 @@ public class DraftGui extends JFrame {
 				model1.addRow(new Object[] {emi1[i].getDate(),emi1[i].getPriority(),emi1[i].getFrom(),emi1[i].getSubject(),emi1[i].getBody(),emi1[i].getAttachments(),false});
 				i++;
 			}
-			
+				}
+				else {
+					JOptionPane.showMessageDialog(null, "No Emails Selected");
+				}
 			}
 		});
 		
 		JButton btnNewButton_1 = new JButton("Move");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				int flag=0;
+				for(int i=0;i<table.getRowCount();i++)
+				{
+					if((boolean) table.getValueAt(i, 6))
+					{
+						flag=1;
+					}
+				}if(flag==1)
+				{
 				DefaultTableModel model = (DefaultTableModel) table.getModel();
 				SLL mails = new SLL();
 				App ap =new App();
@@ -295,25 +317,19 @@ public class DraftGui extends JFrame {
 				Folder destination=new Folder();
 				IndexFile index= new IndexFile();
 				fold.setPath("Accounts\\"+C.currentUser.getEmail()+"\\"+C.folder+"\\Index.txt");
-				trash.setPath("Accounts\\"+C.currentUser.getEmail()+"\\Others\\"+moved.getText()+"\\Index.txt");
-				destination.setPath("Accounts\\"+C.currentUser.getEmail()+"\\Others\\"+moved.getText()+"\\");
+				trash.setPath("Accounts\\"+C.currentUser.getEmail()+"\\Others\\"+moved.getText());
+				destination.setPath("Accounts\\"+C.currentUser.getEmail()+"\\Others\\"+moved.getText());
 				Mail[] emi=(Mail[]) ap.listEmails(page);
-				Folder deso=new Folder();
-				deso.setPath("Accounts\\"+C.currentUser.getEmail()+"\\"+"Drafts\\Index.txt");
-				SLL allSLL=ind.getEmails(ind.readAll(deso));
-				Stacks s=new Stacks();
-				for(int i=0;i<allSLL.size();i++) {
-					s.push(allSLL.get(i));
+				if(moved.getText().equals("Drafts")||moved.getText().equals("Contacts")||moved.getText().equals("Inbox")||moved.getText().equals("Trash")||moved.getText().equals("Sent")||moved.getText().equals("Others"))
+				{
+					JOptionPane.showMessageDialog(null, "Can not move to this folder");
 				}
-				int size=allSLL.size();
-				allSLL.clear();
-				for(int i=0;i<size;i++) {
-					allSLL.add(s.pop());
+				else if(moved.getText().isBlank())
+				{
+				JOptionPane.showMessageDialog(null, "Please Enter Name of folder");
 				}
-				Mail[] all=new Mail[allSLL.size()];
-				for(int i=0;i<all.length;i++) {
-					all[i]=(Mail)allSLL.get(i);
-				}
+				else
+				{
 				for(int i=0;i<table.getRowCount();i++)
 				{
 					if((boolean) table.getValueAt(i, 6))
@@ -321,10 +337,28 @@ public class DraftGui extends JFrame {
 						//emi a5rha 10
 						//formula lw aktr mn 10 ---> (10*((list.size/10)-page+1)+(list.size%10)-i-1)
 						mails.add(all[(10*((ap.list.size()/10)-page+1)+(ap.list.size()%10)-i-1)].getPath());
-						index.deleteLine2(fold, trash, table.getRowCount()-i-1);
+						index.deleteLine2(fold, trash, (10*((ap.list.size()/10)-page+1)+(ap.list.size()%10)-i-1));
 					}
 				}
 				C.moveEmails(mails, destination);
+				Folder deso=new Folder();
+				deso.setPath("Accounts\\"+C.currentUser.getEmail()+"\\"+C.folder+"\\Index.txt");
+				 allSLL=ind.getEmails(ind.readAll(deso));
+				allSLL.size();
+				Stacks s=new Stacks();
+				for(int i=0;i<allSLL.size();i++) {
+					s.push(allSLL.get(i));
+				}
+				
+					
+					int size=allSLL.size();
+				for(int i=0;i<size;i++) {
+					allSLL.add(s.pop());
+				}
+				 all=new Mail[allSLL.size()];
+				for(int i=0;i<all.length;i++) {
+					all[i]=(Mail)allSLL.get(i);
+				}
 				int selectedsort =comboBox_1.getSelectedIndex();
 				Sort sort=new Sort();
 			switch(selectedsort)
@@ -368,9 +402,14 @@ public class DraftGui extends JFrame {
 				model1.addRow(new Object[] {emi1[i].getDate(),emi1[i].getPriority(),emi1[i].getFrom(),emi1[i].getSubject(),emi1[i].getBody(),emi1[i].getAttachments(),false});
 				i++;
 			}
-			
-				
+				}
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(null, "No Emails Selected");
+				}
 			}
+			
 		});
 		
 		moved = new JTextField();

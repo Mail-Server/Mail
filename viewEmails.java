@@ -77,6 +77,10 @@ public class viewEmails extends JFrame {
 		JLabel lblNewLabel_2 = new JLabel(email.getSubject());
 		lblNewLabel_2.setBounds(95, 46, 294, 25);
 		contentPane.add(lblNewLabel_2);
+		if(email.getSubject().equals("NOSUBJECT")) {
+			lblNewLabel_2.setText("");
+		}
+		else 
 		lblNewLabel_2.setText(email.getSubject());
 		JLabel lblNewLabel_1 = new JLabel("");
 		lblNewLabel_1.setBounds(85, 11, 304, 25);
@@ -141,7 +145,7 @@ public class viewEmails extends JFrame {
 			attachments[i]=(String)email.getAttachments().get(i);
 		 names=new String[attachments.length];
 		for (int i=0;i<names.length;i++)
-			names[i]=(attachments[i]).substring(attachments[i].lastIndexOf('\\')+1, attachments[i].length()-1);
+			names[i]=(attachments[i]).substring(attachments[i].lastIndexOf('\\')+1, attachments[i].length());
 		
 		
 		
@@ -224,7 +228,7 @@ public class viewEmails extends JFrame {
 					}
 					 names=new String[attachments.length];
 					for(int i=0;i<attachments.length;i++)
-						names[i]=(attachments[i]).substring(attachments[i].lastIndexOf('\\')+1, attachments[i].length()-1);
+						names[i]=(attachments[i]).substring(attachments[i].lastIndexOf('\\')+1, attachments[i].length());
 					list=new JList(names);
 					scrollPane.setViewportView(list);;
 				}
@@ -262,6 +266,9 @@ public class viewEmails extends JFrame {
 		
 		JTextArea textArea = new JTextArea();
 		textArea.setBounds(25, 188, 368, 168);
+		if(email.getBody().equals("NOTEXT"))
+			textArea.setText("");
+		else 
 		textArea.setText(email.getBody());
 		textArea.setEditable(false);
 		textArea.setFont(new Font("Serif", Font.ITALIC, 16));

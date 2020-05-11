@@ -189,7 +189,7 @@ public class UserGui extends JFrame {
 		JButton draft = new JButton("");
 		draft.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				C.folder="Draft";
+				C.folder="Drafts";
 				dispose();
 				DraftGui test = new DraftGui(C);
 				test.setVisible(true);
