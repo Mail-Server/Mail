@@ -324,7 +324,7 @@ public class FriendsGui extends JFrame {
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				UserGui test=new UserGui(C);
+				UserGui test=new UserGui(ap);
 				test.setVisible(true);
 				
 			}
